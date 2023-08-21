@@ -43,14 +43,14 @@ Please have the following software and user accounts ready on the day of the wor
 - [Docker Hub Account](https://hub.docker.com/signup)
 - Raw files can be downloaded [here](https://drive.google.com/drive/folders/1OXGIx9RHioH1QB65SK75m_liP_fygxYH?usp=drive_link)
 
-# Construction of a simple alignment and variant calling pipeline using nf-core tools
+## Construction of a simple alignment and variant calling pipeline using nf-core tools
 
-1. What is **GitHub**, how we can use it?
+### 1. What is **GitHub**, how we can use it?
 
 - fork https://github.com/GHGA-Training/gcb_ngs_harmonisation_workshop
 - fork https://github.com/nf-core/testpipeline
   
-2.  How to build and use **Docker** containers:
+### 2.  How to build and use **Docker** containers:
 
 - Download and install Docker [here]([url](https://docs.docker.com/get-docker/))
 
@@ -106,11 +106,7 @@ docker commit <containerid> dockerid/imagename:version_tag
 docker push dockerid/imagename:version_tag
 ```
 
-3.  Getting familiar with **Nextflow** and **nf-core**
-
-Complete the installations following the links
-- [Nextflow]([url](https://www.nextflow.io/docs/latest/getstarted.html#installation))
-- [nf-core]([url](https://nf-co.re/))
+### 3.  Getting familiar with **Nextflow** and **nf-core**
 
 ```
 nextflow info
@@ -136,12 +132,13 @@ nf-core list
 nf-core module list remote
 ```
 
-4.  Using nf-core modules to build a simple variant calling pipeline
+### 4.  Using nf-core modules to build a simple variant calling pipeline
 
 - Let's use **nf-core/testpipeline** as a template. We can use the local fork of the pipeline. 
 
 ```
-  git clone https://github.com/*userid*/testpipeline.git
+# Make sure to substitute your Github User ID in the URL below
+git clone https://github.com/*userid*/testpipeline.git
 ```
 
 - We will perform _bwa-mem_ alignment, which requires indexed fasta genome, using _bwa-index_. Thus we need bwa-mem and bwa-index modules. Luckily, nf-core provides bwa modules and we can directly install them!
@@ -149,8 +146,8 @@ nf-core module list remote
 ```
 nf-core modules install bwa/mem
 nf-core modules install bwa/index
-
 ```
+
 Now both modules should be located in **modules/nf-core** directory. 
 
 - In order to use those modules, we will add descriptions to the workflow. 
@@ -183,7 +180,7 @@ sample_paired_end,reads/NA12878_75M_Agilent_1.merged.fastq.gz,reads/NA12878_75M_
 sample_single_end,reads/NA12878_75M_Agilent_1.merged.fastq.gz,
 ```
 
-- In order to perform alignment, we need a fasta file to be indexed. testpipeline includes igenome.config template ready to use. Therefore, we can directly use one of the provided fasta files readily.
+- In order to perform an alignment, we need a fasta file to be indexed. testpipeline includes igenome.config template ready to use. Therefore, we can directly use one of the provided fasta files readily.
 
 Note: [IGenomes](https://emea.support.illumina.com/sequencing/sequencing_software/igenome.html) is a source providing collections of references and annotations supported by AWS.
 
@@ -438,7 +435,7 @@ profiles{
 ```
 
 
-6.  Our first full-functioning pipeline is ready! and we can directly run it!
+### 6.  Our first full-functioning pipeline is ready! and we can directly run it!
 
 ```
 nf-core run main.nf -profile mytest,docker --outdir results --input mysamplesheet.csv
@@ -446,7 +443,7 @@ nf-core run main.nf -profile mytest,docker --outdir results --input mysampleshee
 
 We can actually test and debug our pipeline using this command. What is really cool and helpful is using **-resume** tag in order to resume previously finished jobs! Moreover, don't forget to check out .nextflow.log files in case of an error. All of the runs will be saved into _work_ directory. 
 
-7. Analyzing the results:
+### 7. Analyzing the results:
 
  - Collection of versions is a vital process in order to keep track of software history. In nf-core pipelines, each tool version is collected in a channel and then processed using _CUSTOM_DUMPSOFTWAREVERSIONS_ module and represented through MultiQC tool.
 
@@ -459,7 +456,7 @@ We can actually test and debug our pipeline using this command. What is really c
 
 **NOTE:** 
 
-In case of any installation problems, a preconfigured Nextflow development environment is available using Gitpot: 
+In case of any installation problems, a preconfigured Nextflow development environment is available using Gitpod: 
 
 To run Gitpod:
 
