@@ -32,20 +32,22 @@ We will walk through the following steps:
 8. Exploring the results
 
 ### Requirements
+Please have the following software and user accounts ready on the day of the workshop.
 
 - Bash
 - [Java11](https://www.oracle.com/java/technologies/downloads/) (or later, up to 18)
 - [Nextflow](https://www.nextflow.io/docs/latest/getstarted.html#installation)
-- [nf-core](https://nf-co.re/)
-- [GitHub id](https://github.com/)
+- [nf-core](https://nf-co.re/) - [nf-core tools on Github](https://github.com/nf-core/tools)
+- [GitHub Account](https://github.com/)
 - [Docker](https://www.oracle.com/java/technologies/downloads/)
+- [Docker Hub Account](https://hub.docker.com/signup)
 - Raw files can be downloaded [here](https://drive.google.com/drive/folders/1OXGIx9RHioH1QB65SK75m_liP_fygxYH?usp=drive_link)
 
 # Construction of a simple alignment and variant calling pipeline using nf-core tools
 
 1. What is **GitHub**, how we can use it?
 
-- fork https://github.com/ghga-de/gcb_workshop
+- fork https://github.com/GHGA-Training/gcb_ngs_harmonisation_workshop
 - fork https://github.com/nf-core/testpipeline
   
 2.  How to build and use **Docker** containers:
