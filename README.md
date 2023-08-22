@@ -4,13 +4,16 @@ Materials for NGS Harmonization Workshop at GCB 2023
 
 It is planned to be 3 hours of an overview of standardization and harmonizing NGS analysis strategies in GHGA. We will explore how FAIR principles enable the standardization and harmonization of nf-core-based NGS analysis workflows within GHGA. We will  demonstrate the adaptability of nf-core workflows and discuss the importance of standardization of workflows. Finally, we will show how to make workflows scalable, robust, and automated using a small subset of a public dataset. 
 
+### Preliminary Schedule
 
-- *A* 9:00am  - 9:15am  : Introduction to the tutorial: What is GHGA? What are our workflow objectives? What is FAIR data
-- *B* 9:15am  - 9:45am  : Reproducibility, adaptability, and portability of workflows
-- *C* 9:45am  - 10:15am : Standardization of workflows using Workflow Managers
-- *D* 10:15am - 10:30am : Q&A and Break
-- *E* 10:30am - 11:00am : Accurate analysis and benchmarking
-- *F* 11:00am - 12:00am : Hands-on experience (with minimal test cases provided)
+|Time|Topic|
+|:---|:---|
+|9:00am  - 9:15am|Introduction to the tutorial: What is GHGA? What are our workflow objectives? What is FAIR data|
+|9:15am  - 9:45am|Reproducibility, adaptability, and portability of Workflows|
+|9:45am  - 10:15am|Standardization of workflows using Workflow Managers|
+|10:15am - 10:30am|Break|
+|10:30am - 11:00am|Accurate analysis and benchmarking|
+|11:00am - 12:00am|Hands-on experience (with minimal test cases provided)
 
 
 ### Learning Objectives for Tutorial
@@ -33,14 +36,22 @@ We will walk through the following steps:
 
 ### Requirements
 Please have the following software and user accounts ready on the day of the workshop.
+- [GitHub Account](https://github.com/)
+- [Docker Hub Account](https://hub.docker.com/signup)
 
+A preconfigured Nextflow development environment is available using Gitpod. To run Gitpod:
+
+- Click the following URL: https://gitpod.io/#https://github.com/nextflow-io/training
+  -- This is nextflows GitHub repository URL, prefixed with https://gitpod.io/#
+- Log in to your GitHub account (and allow authorization).
+- Once you have signed in, Gitpod should load (skip prebuild if asked).
+
+To follow the workshop on your computer, you will need the following software and files:
 - Bash
 - [Java11](https://www.oracle.com/java/technologies/downloads/) (or later, up to 18)
 - [Nextflow](https://www.nextflow.io/docs/latest/getstarted.html#installation)
 - [nf-core](https://nf-co.re/) - [nf-core tools on Github](https://github.com/nf-core/tools)
-- [GitHub Account](https://github.com/)
 - [Docker](https://www.oracle.com/java/technologies/downloads/)
-- [Docker Hub Account](https://hub.docker.com/signup)
 - Raw files can be downloaded [here](https://drive.google.com/drive/folders/1OXGIx9RHioH1QB65SK75m_liP_fygxYH?usp=drive_link)
 
 ## Construction of a simple alignment and variant calling pipeline using nf-core tools
@@ -450,20 +461,6 @@ We can actually test and debug our pipeline using this command. What is really c
 - MultiQC tool also aggregates logs and reports from the analysis. In our analysis, FASTQC analysis was already included. In this example file, you can both see FASTQC report and also the software versions together with workflow summary. 
 
 [Uploading multiqc_report.html…]()
-
-
-
-
-**NOTE:** 
-
-In case of any installation problems, a preconfigured Nextflow development environment is available using Gitpod: 
-
-To run Gitpod:
-
-- Click the following URL: https://gitpod.io/#https://github.com/nextflow-io/training
-  -- This is nextflows GitHub repository URL, prefixed with https://gitpod.io/#
-- Log in to your GitHub account (and allow authorization).
-- Once you have signed in, Gitpod should load (skip prebuild if asked).
 
 
 ### Sources
