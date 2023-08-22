@@ -476,9 +476,9 @@ chmod +x bin/*
 
 - Collection of versions is a vital process in order to keep track of software history. In nf-core pipelines, each tool version is collected in a channel and then processed using _CUSTOM_DUMPSOFTWAREVERSIONS_ module and represented through MultiQC tool.
 
-- MultiQC tool also aggregates logs and reports from the analysis. In our analysis, FASTQC analysis was already included. In this example file, you can both see FASTQC report and also the software versions together with workflow summary. 
+- MultiQC tool also aggregates logs and reports from the analysis. In our analysis, FASTQC analysis was already included. In this example file, you can both see FASTQC report and also the software versions together with the workflow summary. 
 
-NOTE: https://github.com/kubranarci/testpipeline/tree/dev container includes a run-ready pipeline with a results directory. If you couldn't manage to complete just yet, you can have a look. 
+NOTE: https://github.com/kubranarci/testpipeline/tree/dev includes a run-ready pipeline with a results directory. If you couldn't manage to complete it just yet, you can have a look. 
 
 ### Sources
 
