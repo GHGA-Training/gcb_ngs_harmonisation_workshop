@@ -490,3 +490,5 @@ Documentation and reference material for nextflow:
 - Common implementation patterns for developers: http://nextflow-io.github.io/patterns/index.html
 
 
+Do you have any questions? mail to kuebra.narci@dkfz-heidelberg.de 
+
