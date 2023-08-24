@@ -90,13 +90,13 @@ docker login
 - The pull command lets you download a Docker image without running it. For example
 
 ```
-docker pull ubuntu:16.04
+docker pull ubuntu:focal
 ```
 
  - Launching a BASH shell in the container allows you to operate in an interactive mode in the containerized operating system. For example
 
 ```
-docker run -ti ubuntu:16.04
+docker run -ti ubuntu:focal
 ```
 
 - Lets build an image to download and install *bcftools*
@@ -105,7 +105,7 @@ docker run -ti ubuntu:16.04
 # Update the package inside the container
 apt-get update
 # Install the tools we need to download and compile Samtools
-apt-get install wget build-essential liblzma-dev libbz2-dev libncurses5-dev zlib1g-dev libcurl4-openssl-dev
+apt-get install -y bzip2 g++ libbz2-dev libcurl4-openssl-dev liblzma-dev make ncurses-dev wget zlib1g-dev
 # Download Bcftools
 wget https://github.com/samtools/bcftools/releases/download/1.17/bcftools-1.17.tar.bz2
 
