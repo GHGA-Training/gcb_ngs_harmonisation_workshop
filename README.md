@@ -158,7 +158,7 @@ nf-core list
 - Listing available modules through nf-core:
 
 ```
-nf-core module list remote
+nf-core modules list remote
 ```
 
 ### 5.  Using nf-core modules to build a simple variant calling pipeline
@@ -465,7 +465,9 @@ profiles{
 nextflow run main.nf -profile mytest,docker --outdir results --input mysamplesheet.csv
 ```
 
-We can actually test and debug our pipeline using this command. What is really cool and helpful is using **-resume** tag in order to resume previously finished jobs! Moreover, don't forget to check out .nextflow.log files in case of an error. All of the runs will be saved into _work_ directory. 
+We can actually test and debug our pipeline using this command. What is really cool and helpful to use the **-resume** tag to resume previously finished jobs! Moreover, don't forget to check out .nextflow.log files in case of an error. All of the runs will be saved into _work_ directory. 
+
+In the first run of this workflow, container images and genome would need to be pulled (all automatic) which is why the initial run will take a bit longer than the following runs!  
 
 NOTE: If you receive a permission denied error for the bin directory just provide the necessary permissions as follows:
 ```
