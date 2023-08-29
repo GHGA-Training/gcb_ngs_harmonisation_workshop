@@ -515,7 +515,7 @@ It is also possible to commit changes using VS-Code if you installed github exte
 When you complete the commit, you can monitor the test under _Actions_ bar at the top of github repository. If everything is working fine, then it will be finished without any errors! 
 
 
-**FINAL NOTE**: https://github.com/kubranarci/testpipeline/tree/dev includes a run-ready pipeline with a results directory. If you haven't managed to complete it just yet, you can have a look. 
+**FINAL NOTE**: https://github.com/kubranarci/testpipeline/tree/dev includes a run-ready pipeline with a results directory. If you haven't managed to complete your workflow just yet, you can have a look. 
 
 
 ### Sources
