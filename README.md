@@ -40,7 +40,7 @@ Please have the following software and user accounts ready on the day of the wor
 - [Docker Hub Account](https://hub.docker.com/signup)
 - [Visual Studio Code](https://code.visualstudio.com/) or your favorite code editor. 
 
-A preconfigured Nextflow development environment is available using Gitpod. To run Gitpod:
+A preconfigured Nextflow development environment is available using Gitpod. To run **Gitpod**:
 
 - Click the following URL: https://gitpod.io/#https://github.com/nextflow-io/training
   -- This is nextflows GitHub repository URL, prefixed with https://gitpod.io/#
@@ -478,11 +478,50 @@ chmod +x bin/*
 
 - Collection of versions is a vital process in order to keep track of software history. In nf-core pipelines, each tool version is collected in a channel and then processed using _CUSTOM_DUMPSOFTWAREVERSIONS_ module and represented through MultiQC tool.
 
-- MultiQC tool also aggregates logs and reports from the analysis. In our analysis, FASTQC analysis was already included. In this example file, you can both see FASTQC report and also the software versions together with the workflow summary. 
+- MultiQC tool also aggregates logs and reports from the analysis. In our analysis, FASTQC analysis was already included. In this example file, you can both see the FASTQC report and the software versions together with the workflow summary. 
 
-NOTE: https://github.com/kubranarci/testpipeline/tree/dev includes a run-ready pipeline with a results directory. If you couldn't manage to complete it just yet, you can have a look. 
+
+### 8. Committing changes to github repo, and Continuous Integration test environment  
+
+Continuous Integration (CI) tests are curious for automatic software development. The aim is to protect the main branch from errors and unintended changes. CI tests are mandatory for nf-core pipelines and luckily in our example nf-core/testpipeline also comes with an environment that we can actually work on! In order to activate automatic tests:
+
+- Activate actions tab on github (on your github repo testpipeline)
+- under .github/workflows/ci.yml
+
+Change this line
+
+```yml
+    # Only run on push if this is the nf-core dev branch (merged PRs)
+    if: "${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == 'nf-core/testpipeline') }}"
+```
+to
+```yml
+    # Only run on push
+    if: "${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == '<your github name>/testpipeline') }}"
+```
+
+Now whenever we commit changes to _dev_ branch, a small test pipeline will be triggered in order to check if the workflow/code works smoothly.  
+
+    
+The last thing we need to do is to commit the changes we have in our repository and push into _dev_ branch that we were working in. 
+
+```
+git add .
+git commit -a -m "commit" (commit message)
+```
+
+It is also possible to commit changes using VS-Code if you installed github extensions. It would appear on the left side of the workspace. 
+
+When you complete the commit, you can monitor the test under _Actions_ bar at the top of github repository. If everything is working fine, then it will be finished without any errors! 
+
+
+**FINAL NOTE**: https://github.com/kubranarci/testpipeline/tree/dev includes a run-ready pipeline with a results directory. If you haven't managed to complete it just yet, you can have a look. 
+
 
 ### Sources
+
+Who is GHGA?
+- https://www.ghga.de/
 
 Documentation and reference material for nextflow:
 - Nextflow homepage: https://www.nextflow.io/
@@ -490,6 +529,13 @@ Documentation and reference material for nextflow:
 - Pipeline examples: https://www.nextflow.io/example1.html
 - Main documentation: https://www.nextflow.io/docs/latest/index.html
 - Common implementation patterns for developers: http://nextflow-io.github.io/patterns/index.html
+
+Docker for beginners:
+- https://docker-curriculum.com/
+  
+Github Actions & GitHub CI:
+- https://docs.github.com/en/actions/automating-builds-and-tests/about-continuous-integration
+- https://resources.github.com/ci-cd/
 
 
 Do you have any questions? mail to kuebra.narci@dkfz-heidelberg.de 
