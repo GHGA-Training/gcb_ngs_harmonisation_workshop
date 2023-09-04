@@ -33,6 +33,7 @@ We will walk through the following steps:
 6. Contraction of a simple variant calling pipeline using bwa-mem and bcftools using nf-core modules and templates.
 7. Dealing with config files and running the pipeline. 
 8. Exploring the results
+9. Adapting a Continuous Integration environment using github actions. 
 
 ### Requirements
 Please have the following software and user accounts ready on the day of the workshop.
@@ -53,24 +54,30 @@ To follow the workshop on your computer, you will need the following software an
 - [Nextflow](https://www.nextflow.io/docs/latest/getstarted.html#installation)
 - [nf-core](https://nf-co.re/) - [nf-core tools on Github](https://github.com/nf-core/tools)
 - [Docker](https://www.oracle.com/java/technologies/downloads/)
-- Raw files can be downloaded [here](https://drive.google.com/drive/folders/1OXGIx9RHioH1QB65SK75m_liP_fygxYH?usp=drive_link)
+- Raw files (one of them is enough):
+    - [NA12878 chr21](https://drive.google.com/drive/folders/1OXGIx9RHioH1QB65SK75m_liP_fygxYH?usp=drive_link)
+    - [SEQC2 small set](https://github.com/GHGA-Training/gcb_ngs_harmonisation_workshop/tree/main/reads) 
 
 ## Construction of a simple alignment and variant calling pipeline using nf-core tools
 
-### 1. What is **GitHub**, how we can use it?
+### 1. What is **GitHub**, and how we can use it?
 
-GitHub is one of the most commonly used platform for collaborative software development and version control using git. 
+The most common way of providing stable versions for software is through git systems. Github, gitlab or bitbucket are all valuable services in software development. They provide code hosting/storage platform for version control and collaboration. It lets you and others work on the same project from anywhere. Using git systems one can create different branches (or copies) of the stable working version dependent or independent of one another. 
+
+GitHub is one of the most commonly used platform for collaborative software development and version control using git. We will be using the following repositories through this workshop. If you want, you can fork gcb_ngs_harmonisation_workshop or follow from the original documentation. _nf-core/testpipeline_ will be used as a template for our workflow construction. Again,  you can either fork and create a local version of it. Dont forget to create your working (dev) branch to work on. 
 
 - fork https://github.com/GHGA-Training/gcb_ngs_harmonisation_workshop
 - fork https://github.com/nf-core/testpipeline
 
 Whenever you fork those pages, you can take any actions on that as you wish! 
-We will be using nf-core testpipeline as a template to create our own pipeline. After we create a fork of this pipeline, we will clone the directory into our workstation and open a new branch to work on: 
 
 ```
 git clone https://github.com/<your github name>/testpipeline
 git checkout -b dev
 ```
+
+if you don't want to fork the repo, pull it in your local computer work on it and push it into your own github repo! 
+
 ### 2.  Creating your own VS-Code workstation:
 
 There are plenty of good editors but here we will be using VS-Code. If you have any other preference just go with it! The idea is to be able to connect multi-services in an environment creating a functional development strategy for lining, debugging,  editing, and pushing your code. You can add, VS-code extensions like Nextflow, nf-core tools, github, python, R and many more. 
@@ -79,7 +86,9 @@ Simply, open _testpipeline_ using VS-code and start working on it!
   
 ### 3.  How to build and use **Docker** containers:
 
-- Using software containers is crucial to make our pipelines portable. Therefore, we will be only using them through this workshop. We will be constructing our own bcftools container as an example. 
+- Containers are configurable virtualization technology that allows the packaging and distribution of pipelines  in a self-contained and platform-independent manner. By this way, installed software using package managers can be packed into an image with its corresponding dependencies. An image can be considered as  a file (or set of files) that contains the application with the code and all its dependencies, libraries, etc. You can copy images around, upload them into registries, download them, and re-use them. Commonly used software for containerization in bioinformatics includes Docker, Singularity and podman. 
+
+- Using software containers is crucial to make our pipelines portable. In this workshop, we will be using docker and singularity in order to dive in better, we will be constructing our own bcftools container as an example.  
   
 - Download and install Docker [here]([url](https://docs.docker.com/get-docker/))
 
@@ -136,6 +145,11 @@ docker push <docker_name>/imagename:version_tag
 ```
 
 ### 4.  Getting familiar with **Nextflow** and **nf-core**
+
+The new generation way of pipelines are  Workflow management systems providing all components of standard analysis. They increase transparency, enable long-term sustainability, and aid in achieving findable, accessible, interoperable, and reusable computational analysis and they are FAIR-approved! Snakemake, Galaxy, cornwell, pegasus and Nextflow are all open source and free-to-use examples! Workflow managers use containers to run software providing portability and stability. They provide scalability: They automatically manage the scheduling enabling the effective utilization of available resources. Required reference files can be pulled through cloud registries ensuring saving space locally. They are able to cache intermediate results avoiding recalculations saving significant time and computing resources which is a key advantage of workflow managers. Project repositories are often in git systems allowing collaboration and feedback. When the execution is finished, They provide the option to generate execution reports with detailed information about the run. 
+
+Nextflow is growing fast and has long-term support available from Seqera Labs. It has been developed since 2013 by the same team. Nf-core is a community effort to collect a curated set of analysis pipelines built using Nextflow. The effort itself is not just restricted to pipelines, they also provide sub-workflows and modules (single processes running tools). Their modular design is very standard and also flexible for multi-purposing.  They also provide helper tools to create template pipelines, install modules, and create test cases. 
+
 
 ```
 nextflow info
@@ -476,14 +490,16 @@ chmod +x bin/*
 
 ### 7. Analyzing the results:
 
+- _Provenance_ describes the history of a computational experiment and it is a very important aspect of workflows. Minor changes, usually in the workflow environment, software versions, parameter settings, and reference annotations, may or may not change the results of each workflow run but the major challenge is to know and record the exact environment you run your analysis. Data provenance describes this trail of methods, versions, and arguments that were used to generate a set of files. In short, it is the history of a computational environment you used for the analysis.
+- nf-core pipelines are armed through many provenance tools with the construction of _work_ directory with _temp_ results of each run, saving workflow execution history through .nextflow.log files as well as _CUSTOM_DUMPSOFTWAREVERSIONS_ module and MultiQC tools. 
 - Collection of versions is a vital process in order to keep track of software history. In nf-core pipelines, each tool version is collected in a channel and then processed using _CUSTOM_DUMPSOFTWAREVERSIONS_ module and represented through MultiQC tool.
-
-- MultiQC tool also aggregates logs and reports from the analysis. In our analysis, FASTQC analysis was already included. In this example file, you can both see the FASTQC report and the software versions together with the workflow summary. 
+- Used data, produced inputs and outputs, artifacts, information about the execution like consumed memory and CPU, processed time saved and represented in final reports of nf-core tools. 
+- MultiQC tool also aggregates logs and reports from the analysis. In our analysis, FASTQC analysis was already included. In this example file, you can both see the FASTQC report and the software versions together with the workflow summary.
 
 
 ### 8. Committing changes to github repo, and Continuous Integration test environment  
 
-Continuous Integration (CI) tests are curious for automatic software development. The aim is to protect the main branch from errors and unintended changes. CI tests are mandatory for nf-core pipelines and luckily in our example nf-core/testpipeline also comes with an environment that we can actually work on! In order to activate automatic tests:
+Another advantage of using github is easy debugging. Testing the code and building can be automized. Continuous Integration (CI) tests refer to the build and unit testing stages of the software release process and are curious for automatic software development. Every revision that is committed triggers an automated build and test. When it is reviewed and approved, it can be merged safely. The aim is to protect the main branch from errors and unintended changes. CI tests are mandatory for nf-core pipelines and luckily in our example nf-core/testpipeline also comes with an environment that we can actually work on! In order to activate automatic tests:
 
 - Activate actions tab on github (on your github repo testpipeline)
 - under .github/workflows/ci.yml
