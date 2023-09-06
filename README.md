@@ -473,7 +473,7 @@ params {
 }
 ```
 
-Then, we should add the path of our config into nextflow.config file to be able to use directly. 
+Then, we should add the path of our config ('conf/mytest.config' ) into nextflow.config file to be able to use directly. It should be inside _profiles_ section : 
 
 ``` Nextflow
 profiles{
@@ -484,6 +484,7 @@ profiles{
 
 ### 6.  Our first full-functioning pipeline is ready! and we can directly run it!
 
+Here, we will try to run our workflow using the config file we created (mytest), and input file we prepared (mysamplesheet.csv) and docker environment. But you can also run it with singularity. You can define another output directory else than _results_. 
 ```
 nextflow run main.nf -profile mytest,docker --outdir results --input mysamplesheet.csv
 ```
