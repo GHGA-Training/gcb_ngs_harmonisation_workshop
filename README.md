@@ -214,17 +214,6 @@ include { BWA_MEM                } from '../modules/nf-core/bwa/mem/main'
 include { BWA_INDEX              } from '../modules/nf-core/bwa/index/main'
 ```
 
-- This pipeline comes with a ready sub-workflow in order to check the input files and create an input channel with them (subworkflows/input_check.nf). It automatically checks and validates the header, sample names, and sample directories. This module is implemented for both pair-end and single-end fastq file processing simultaneously. Since we will also use the same format, we won't change the module and make use of it directly. But, still, we need to prepare our own samplesheet accordingly to be able to input our files:
-
-Place fastq files (reads) into testpipeline directory and create mysamplesheet.csv file: 
-
-
-```console
-sample,fastq_1,fastq_2
-sample_paired_end,reads/NA12878_75M_Agilent_1.merged.fastq.gz,reads/NA12878_75M_Agilent_2.merged.fastq.gz
-sample_single_end,reads/NA12878_75M_Agilent_1.merged.fastq.gz,
-```
-
 - In order to perform alignment using _bwa-mem,_ we need the reference fasta file to be indexed. testpipeline includes igenome.config template ready to use. Therefore, we can directly use one of the provided fasta files readily. We will use _bwa_index_ tool to index fasta file. 
 
 Note: [IGenomes](https://emea.support.illumina.com/sequencing/sequencing_software/igenome.html) is a source providing collections of references and annotations supported by AWS.
@@ -306,7 +295,7 @@ process BCFTOOLS_MPILEUP {
 }
 
 ```
-Now, open bcftools_mpileup.nf and place under modules/local folder. 
+Open bcftools_mpileup.nf and place under modules/local folder, and copy the above draft BCFTOOLS_MPILEUP module into open bcftools_mpileup.nf. We will need to include _INPUT_FILES_, _OUTPUT_FILES_, _CMD_ and _CMD_VERSION_ sections in order to make this module compleate as follows: 
 
 Now, we need to construct the simple CMD for variant calling: 
 
@@ -344,14 +333,13 @@ We will need the alignment bam file and reference fasta file to run _bcftools mp
 
 
 ```Nextflow
-    input:
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         bcftools: \$(bcftools --version 2>&1 | head -n1 | sed 's/^.*bcftools //; s/ .*\$//')
     END_VERSIONS
 ```
 
- We can add either our docker container or search for the proper bcftool version on[ biocontainers registry](https://quay.io/repository/biocontainers/bcftools?tab=tags). 
+ We can add either our docker container (created in the 3rt step) or search for the proper bcftool version on[ biocontainers registry](https://quay.io/repository/biocontainers/bcftools?tab=tags). 
 
 ```Nextflow
     conda "bioconda::bcftools=1.17"
@@ -408,7 +396,8 @@ process BCFTOOLS_MPILEUP {
     """
 }
 ```
-- Now, we need to include the module in the workflow. First add path of the module:
+
+- Since we finished BCFTOOLS_MPILEUP module, we can include it in the workflow. First, add path of the module:
 
 ``` Nextflow
 //
@@ -418,7 +407,7 @@ include { BCFTOOLS_MPILEUP            } from '../modules/local/bcftools_mpileup.
 
 ```
   
-- Let's connect the module to the output of BWA_MEM module
+- Let's connect BCFTOOLS_MPILEUP module to the output of BWA_MEM module
 
 ``` Nextflow
     //
@@ -430,6 +419,20 @@ include { BCFTOOLS_MPILEUP            } from '../modules/local/bcftools_mpileup.
     )
     ch_versions = ch_versions.mix(BCFTOOLS_MPILEUP.out.versions)
 ```
+
+- Now, let's prepare our **input file** which includes our sample reads:
+
+  - This pipeline comes with a ready sub-workflow in order to check the input files and create an input channel with them (subworkflows/input_check.nf). It automatically checks and validates the header, sample names, and sample directories. This module is implemented for both pair-end and single-end fastq file processing simultaneously. Since we will also use the same format, we won't change the module and make use of it directly. But, still, we need to prepare our own samplesheet accordingly to be able to input our files:
+
+Place fastq files (reads) into testpipeline directory and create mysamplesheet.csv file: 
+
+
+```console
+sample,fastq_1,fastq_2
+sample_paired_end,reads/NA12878_75M_Agilent_1.merged.fastq.gz,reads/NA12878_75M_Agilent_2.merged.fastq.gz
+sample_single_end,reads/NA12878_75M_Agilent_1.merged.fastq.gz,
+```
+
 
 - Our simple pipeline, providing parallel alignments for both paired-end and single-end fastq files is ready! Now, we need to create a config file to describe the parameters needed for the run.
 
