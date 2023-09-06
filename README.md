@@ -47,6 +47,7 @@ A preconfigured Nextflow development environment is available using Gitpod. To r
   -- This is nextflows GitHub repository URL, prefixed with https://gitpod.io/#
 - Log in to your GitHub account (and allow authorization).
 - Once you have signed in, Gitpod should load (skip prebuild if asked).
+- _If you decided to use the Gitpod environment, you don`t need to install anything into your local computer! But still, you would need to have github and docker accounts_
 
 To follow the workshop on your computer, you will need the following software and files:
 - Bash
@@ -59,6 +60,9 @@ To follow the workshop on your computer, you will need the following software an
     - [SEQC2 small set](https://github.com/GHGA-Training/gcb_ngs_harmonisation_workshop/tree/main/reads) 
 
 ## Construction of a simple alignment and variant calling pipeline using nf-core tools
+
+Please follow all of the steps 1-9  to be able to construct a simple nextflow pipeline. 
+
 
 ### 1. What is **GitHub**, and how we can use it?
 
@@ -107,7 +111,8 @@ docker pull ubuntu:focal
 ```
 docker run -ti ubuntu:focal
 ```
-
+- Now, you will be inside the ubuntu:focal image. But, in your local system, another layer with root@<containerid> should have been generated. 
+  
 - Lets build an image to download and install *bcftools*
 
 ```
@@ -130,6 +135,7 @@ bcftools --version
 #If complete exit docker
 exit
 ```
+root@<containerid> is now exit. And you are back to your local computer. 
 
 - Save and upload the docker image.
 An example image name could be: kubran/bcftools:v1.17
