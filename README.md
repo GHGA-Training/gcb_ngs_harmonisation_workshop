@@ -137,18 +137,24 @@ exit
 ```
 root@<containerid> is now exit. And you are back to your local computer. 
 
-- Save and upload the docker image.
-An example image name could be: kubran/bcftools:v1.17
+- Now, lets commit (save) the <containerid> to our docker registry and upload it there.
+(An example image name could be: kubran/bcftools:v1.17)
 
+Prepare your own credentials: 
 ```
 docker commit <containerid> <docker_name>/imagename:version_tag
 ```
 
-- Push the image to Dockerhub:
+- Push the image to Dockerhub registry when the commit is done:
 
 ```
 docker push <docker_name>/imagename:version_tag
 ```
+
+- Singularity is another containerization platform that you can use instead of docker. Docker images can quickly be converted into singularity. It is also possible to use docker-converted singularity images directly by nextflow as follows:
+
+singularity_image = docker://<docker_name>/imagename:version_tag
+
 
 ### 4.  Getting familiar with **Nextflow** and **nf-core**
 
@@ -481,6 +487,24 @@ profiles{
 }
 ```
 
+One of the other configurations that we need to be careful of is setting a mirror to your container settings. In _nf-core/testpipeline_ they set _quay.io_ as a mirror for the registries by default. But if you want to use your own docker container generated in the 3rd step you should delete the default settings. 
+
+``` Nextflow
+apptainer.registry   = 'quay.io'
+docker.registry      = 'quay.io'
+podman.registry      = 'quay.io'
+singularity.registry = 'quay.io'
+```
+to 
+
+``` Nextflow
+apptainer.registry   = ''
+docker.registry      = ''
+podman.registry      = ''
+singularity.registry = ''
+```
+
+If you decide to use ready containers from biocontainers default settings can remain. 
 
 ### 6.  Our first full-functioning pipeline is ready! and we can directly run it!
 
