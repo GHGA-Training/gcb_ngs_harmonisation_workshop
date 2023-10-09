@@ -71,12 +71,12 @@ The most common way of providing stable versions for software is through git sys
 GitHub is one of the most commonly used platform for collaborative software development and version control using git. We will be using the following repositories through this workshop. If you want, you can fork gcb_ngs_harmonisation_workshop or follow from the original documentation. _nf-core/testpipeline_ will be used as a template for our workflow construction. Again,  you can either fork and create a local version of it. Dont forget to create your working (dev) branch to work on. 
 
 - fork https://github.com/GHGA-Training/gcb_ngs_harmonisation_workshop
-- fork https://github.com/nf-core/testpipeline
+- fork https://github.com/nf-core/testpipeline -r v0.1.5
 
 Whenever you fork those pages, you can take any actions on that as you wish! 
 
 ```
-git clone https://github.com/<your github name>/testpipeline
+git clone https://github.com/<yourgithubname>/testpipeline -r v0.1.5
 git checkout -b dev
 ```
 
