@@ -1,6 +1,6 @@
 ## **Standardizing and harmonizing NGS analysis workflows**
 
-Materials for NGS Harmonization Workshop at GCB 2023
+Materials for NGS Harmonization Workshop at GCB 2024
 
 It is planned to be 3 hours of an overview of standardization and harmonizing NGS analysis strategies in GHGA. We will explore how FAIR principles enable the standardization and harmonization of nf-core-based NGS analysis workflows within GHGA. We will  demonstrate the adaptability of nf-core workflows and discuss the importance of standardization of workflows. Finally, we will show how to make workflows scalable, robust, and automated using a small subset of a public dataset. 
 
@@ -8,12 +8,13 @@ It is planned to be 3 hours of an overview of standardization and harmonizing NG
 
 |Time|Topic|
 |:---|:---|
-|9:00am  - 9:15am|Introduction to the tutorial: What is GHGA? What are our workflow objectives? What is FAIR data|
-|9:15am  - 9:45am|Reproducibility, adaptability, and portability of Workflows|
-|9:45am  - 10:15am|Standardization of workflows using Workflow Managers|
-|10:15am - 10:30am|Break|
-|10:30am - 11:00am|Accurate analysis and benchmarking|
-|11:00am - 12:00am|Hands-on experience (with minimal test cases provided)
+|9:00am  - 9:10am| Introduction to the tutorial: What is GHGA? What are our workflow objectives? What is FAIR data|
+|9:10am  - 9:30am| Reproducibility, adaptability, and portability of Workflows|
+|9:30am  - 10:15am| Hands-on part 1: Docker, Github, introduction to nextflow and nf-core tools |
+|10:15am - 10:30am| Break|
+|10:30am - 11:30am| Hands-on part 2: Setting up a simple nextflow workflow using nf-core tools|
+|11:30am - 11:50am| How to keep reproducibility 
+|11:50am - 12:00am| Summary 
 
 
 ### Learning Objectives for Tutorial
@@ -55,30 +56,73 @@ To follow the workshop on your computer, you will need the following software an
 - [Nextflow](https://www.nextflow.io/docs/latest/getstarted.html#installation)
 - [nf-core](https://nf-co.re/) - [nf-core tools on Github](https://github.com/nf-core/tools)
 - [Docker](https://www.oracle.com/java/technologies/downloads/)
+- [GitHub CLI] (https://cli.github.com/)
 - Raw files (one of them is enough):
     - [NA12878 chr21](https://drive.google.com/drive/folders/1OXGIx9RHioH1QB65SK75m_liP_fygxYH?usp=drive_link)
     - [SEQC2 small set](https://github.com/GHGA-Training/gcb_ngs_harmonisation_workshop/tree/main/reads) 
 
-## Construction of a simple alignment and variant calling pipeline using nf-core tools
-
-Please follow all of the steps 1-9  to be able to construct a simple nextflow pipeline. 
-
+## Part 1 
 
 ### 1. What is **GitHub**, and how we can use it?
 
 The most common way of providing stable versions for software is through git systems. Github, gitlab or bitbucket are all valuable services in software development. They provide code hosting/storage platform for version control and collaboration. It lets you and others work on the same project from anywhere. Using git systems one can create different branches (or copies) of the stable working version dependent or independent of one another. 
 
-GitHub is one of the most commonly used platform for collaborative software development and version control using git. We will be using the following repositories through this workshop. If you want, you can fork gcb_ngs_harmonisation_workshop or follow from the original documentation. _nf-core/testpipeline_ will be used as a template for our workflow construction. Again,  you can either fork and create a local version of it. Dont forget to create your working (dev) branch to work on. 
+GitHub is one of the most commonly used platform for collaborative software development and version control using git. We will be using the following repositories through this workshop. If you want, you can fork gcb_ngs_harmonisation_workshop or follow it from the original documentation.
 
-- fork https://github.com/GHGA-Training/gcb_ngs_harmonisation_workshop
-- fork https://github.com/nf-core/testpipeline -r v0.1.5
+In order to ease the constraction, _nf-core/testpipeline_ will be used as a template for our workflow construction. Again,  you can either fork and create a local version of it. Dont forget to create your working (dev) branch to work on. 
+
+Go to the websites and fork the following repositories:
+- https://github.com/GHGA-Training/gcb_ngs_harmonisation_workshop
+- https://github.com/nf-core/testpipeline -r v0.1.5
+
+or
+
+```
+gh auth login
+gh repo fork https://github.com/GHGA-Training/gcb_ngs_harmonisation_workshop.git --clone
+gh repo fork https://github.com/nf-core/testpipeline -r v0.1.5 --clone
+```
 
 Whenever you fork those pages, you can take any actions on that as you wish! 
+
+Now, lets clone the forked testpipeline and start working on it.
 
 ```
 git clone https://github.com/<yourgithubname>/testpipeline -r v0.1.5
 git checkout -b dev
 ```
+
+Usually, working on branches is adviced to keep master enviroment as safe as possible. So, lets create _testbranch_ branch:
+
+```
+git checkout -b testbranch
+```
+
+- You can switch back to master:
+
+```
+git checkout master
+```
+
+- You can delete the branches like: 
+
+```
+git checkout -d testbranch
+```
+
+Don't forget that, unless you push the branch to your remote repository, the changes are only available to you.
+
+- You can push the branch to your remote like:
+
+```
+git push origin testbranch
+```
+
+Exercise:
+
+- Now, checkout to a new branch named as '_dev_' and start working on it.  
+
+Notes: 
 
 if you don't want to fork the repo, pull it in your local computer work on it and push it into your own github repo! 
 
@@ -86,7 +130,18 @@ if you don't want to fork the repo, pull it in your local computer work on it an
 
 There are plenty of good editors but here we will be using VS-Code. If you have any other preference just go with it! The idea is to be able to connect multi-services in an environment creating a functional development strategy for lining, debugging,  editing, and pushing your code. You can add, VS-code extensions like Nextflow, nf-core tools, github, python, R and many more. 
 
-Simply, open _testpipeline_ using VS-code and start working on it!
+Simply, you can open _testpipeline_ using VS-code and start working on it!
+
+- Open VS-code
+
+- if you did not clone the repository:
+    - Press "Clone Git Repository"
+- Else:
+    - Open the directory where you clone the repository
+
+- Checkout to '_dev_' branch 
+    - Press '_master_' bottom left of the screen
+    - Write dev and press enter.
   
 ### 3.  How to build and use **Docker** containers:
 
@@ -94,7 +149,7 @@ Simply, open _testpipeline_ using VS-code and start working on it!
 
 - Using software containers is crucial to make our pipelines portable. In this workshop, we will be using docker and singularity in order to dive in better, we will be constructing our own bcftools container as an example.  
   
-- Download and install Docker [here]([url](https://docs.docker.com/get-docker/))
+**Docker**
 
 ```
 docker login
@@ -151,10 +206,71 @@ docker commit <containerid> <docker_name>/imagename:version_tag
 docker push <docker_name>/imagename:version_tag
 ```
 
+**Dockerfiles**
+
+- The repeability of the containerization can be enabled through Dockerfile. A Dockerfile is a text document that contains all the commands a user could call on the command line to assemble an image. It has a big advaage over manuel containizarization since the file can be versioned, maintained, editted and shared with others easiliy. 
+
+- Now, lets use a Dockerfile to create another image: 
+    - Save this Dockerfile to your enviroment (dont use any extension and name the file as Dockerfile):
+
+```
+# Use an appropriate base image
+FROM ubuntu:20.04
+
+# Set the maintainer label
+LABEL maintainer="yourname@example.com"
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    wget \
+    bzip2 \
+    libbz2-dev \
+    zlib1g-dev \
+    libncurses5-dev \
+    libncursesw5-dev \
+    liblzma-dev \
+    libcurl4-openssl-dev \
+    gcc \
+    make \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set environment variables
+ENV BCFTOOLS_VERSION=1.17
+
+# Download and install BCFtools
+RUN wget https://github.com/samtools/bcftools/releases/download/${BCFTOOLS_VERSION}/bcftools-${BCFTOOLS_VERSION}.tar.bz2 && \
+    tar -xvjf bcftools-${BCFTOOLS_VERSION}.tar.bz2 && \
+    cd bcftools-${BCFTOOLS_VERSION} && \
+    make && \
+    make install && \
+    cd .. && \
+    rm -rf bcftools-${BCFTOOLS_VERSION} bcftools-${BCFTOOLS_VERSION}.tar.bz2
+
+```
+
+- Run the following to build the image from Dockerfile:
+
+```
+docker build --platform linux/amd64 -t bcftools:1.17 .
+```
+
+- Tag the image to Dockerhub registry
+
+```
+docker tag  bcftools:1.17 <docker_name>/bcftools:1.17
+```
+
+- Push the image to Dockerhub registry
+
+```
+docker push <docker_name>/bcftools:1.17
+```
+
+**Singularity**
+
 - Singularity is another containerization platform that you can use instead of docker. Docker images can quickly be converted into singularity. It is also possible to use docker-converted singularity images directly by nextflow as follows:
 
 singularity_image = docker://<docker_name>/imagename:version_tag
-
 
 ### 4.  Getting familiar with **Nextflow** and **nf-core**
 
@@ -186,6 +302,12 @@ nf-core list
 ```
 nf-core modules list remote
 ```
+
+## Part 2 
+
+## Construction of a simple alignment and variant calling pipeline using nf-core tools
+
+Please follow all of the steps 1-9  to be able to construct a simple nextflow pipeline. 
 
 ### 5.  Using nf-core modules to build a simple variant calling pipeline
 
@@ -566,6 +688,53 @@ When you complete the commit, you can monitor the test under _Actions_ bar at th
 
 
 **FINAL NOTE**: https://github.com/kubranarci/testpipeline/tree/dev includes a run-ready pipeline with a results directory. If you haven't managed to complete your workflow just yet, you can have a look. 
+
+### Are you looking for your next challange? 
+
+If you are feeling confortable enough working with template pipeline, why not to create your own pipeline using a (nf-core pipeline)[https://nf-co.re/docs/nf-core-tools/pipelines/create] template?
+
+In this small exercise you will be creating a simple workflow to subset, sort and index given alignment files.
+
+1. Create a new pipeline using _create_ command
+
+```
+nf-core create -n sortandindex -d "This pipeline subsets a region, sorts and indexes given alignment files" --plain
+```
+
+2. Edit schema_input.json to input **a BAM file** and **a string** to subset a region.
+
+4. Set input_ch.
+
+5. Create input channels for fasta/fai references. You can use igenomes in that purpose.
+
+6. Install relevant samtools modules:
+
+```
+nf-core modules install samtools/sort
+nf-core modules install samtools/view
+nf-core modules install samtools/index
+
+```
+7. Include samtools modules to the workflow.
+
+8. Connect modules so that an example run will perform the following tasks:
+
+```
+samtools view -o input.inputregion.bam -b input.bam inputregion
+
+samtools sort -o input.inputregion.sorted.bam input.chinputregionr21.bam
+
+samtools index -b  input.inputregion.bam input.inputregion.bam.bai
+
+```
+
+9. Edit modules.config to arrange arguments and output files properly
+
+10. Edit test.config for quick test development. Tip: You can use the example bam files in this exercise.
+
+11. Test your development
+
+12. Once it is ready, commit your changes to your github repository.
 
 
 ### Sources
