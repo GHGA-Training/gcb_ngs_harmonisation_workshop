@@ -56,7 +56,7 @@ To follow the workshop on your computer, you will need the following software an
 - [Nextflow](https://www.nextflow.io/docs/latest/getstarted.html#installation)
 - [nf-core](https://nf-co.re/) - [nf-core tools on Github](https://github.com/nf-core/tools)
 - [Docker](https://www.oracle.com/java/technologies/downloads/)
-- [GitHub CLI] (https://cli.github.com/)
+- [GitHub CLI](https://cli.github.com/)
 - Raw files (one of them is enough):
     - [NA12878 chr21](https://drive.google.com/drive/folders/1OXGIx9RHioH1QB65SK75m_liP_fygxYH?usp=drive_link)
     - [SEQC2 small set](https://github.com/GHGA-Training/gcb_ngs_harmonisation_workshop/tree/main/reads) 
@@ -73,14 +73,14 @@ In order to ease the constraction, _nf-core/testpipeline_ will be used as a temp
 
 Go to the websites and fork the following repositories:
 - https://github.com/GHGA-Training/gcb_ngs_harmonisation_workshop
-- https://github.com/nf-core/testpipeline -r v0.1.5
+- https://github.com/nf-core/testpipeline
 
 or
 
 ```
 gh auth login
 gh repo fork https://github.com/GHGA-Training/gcb_ngs_harmonisation_workshop.git --clone
-gh repo fork https://github.com/nf-core/testpipeline -r v0.1.5 --clone
+gh repo fork https://github.com/nf-core/testpipeline --clone
 ```
 
 Whenever you fork those pages, you can take any actions on that as you wish! 
@@ -88,7 +88,7 @@ Whenever you fork those pages, you can take any actions on that as you wish!
 Now, lets clone the forked testpipeline and start working on it.
 
 ```
-git clone https://github.com/<yourgithubname>/testpipeline -r v0.1.5
+git clone https://github.com/<yourgithubname>/testpipeline
 git checkout -b dev
 ```
 
@@ -283,7 +283,7 @@ Nextflow is growing fast and has long-term support available from Seqera Labs. I
 nextflow info
 ```
 
-**nf-core** is a community effort to optimize and collect a set of nextflow pipelines. Currently, they have **86** pipelines!
+**nf-core** is a community effort to optimize and collect a set of nextflow pipelines. Currently, they have **108** pipelines!
 
 - let's explore **nf-core** tool:
 
@@ -297,11 +297,25 @@ nf-core --help
 nf-core list
 ```
 
+Running nf-core pipelines are very easy! Most of the resources that nf-core uses are deposit on the cloud, meaning that you might not need to deal with pipeline and reference set-up. Lets perform an a test run using their famous [rnaseq pipeline](https://nf-co.re/rnaseq/3.14.0) (or you can choose to run another pipeline in their list). 
+
+- [_test_ profile](https://github.com/nf-core/rnaseq/blob/3.14.0/conf/test.config) includes necessary input, output and parameter information to perform an example run
+
+```
+# Launch the RNAseq pipeline
+nextflow run nf-core/rnaseq -profile test,docker
+```
+
+**nf-core** also provides ready to use atomic processes for pipelines which are called as _modules_. Their modules library is very wide, they have **1273** modules.
+
 - Listing available modules through nf-core:
 
 ```
 nf-core modules list remote
 ```
+
+We will play more with nf-core modules in the second part. 
+
 
 ## Part 2 
 
@@ -309,37 +323,107 @@ nf-core modules list remote
 
 Please follow all of the steps 1-9  to be able to construct a simple nextflow pipeline. 
 
-### 5.  Using nf-core modules to build a simple variant calling pipeline
+### 1.  Using nf-core modules to build a simple variant calling pipeline
 
-- Let's use **nf-core/testpipeline** as a template. We will use the local fork of the pipeline.
+- Let's use **nf-core/testpipeline** as a template. This pipeline is created from nf-core template originally and includes FastQC and MultiQC, and it is already working. We will use the local fork of the pipeline.
   
 Note: Do not use _master_ brach switch into _dev_!
 
-- We will perform _bwa-mem_ alignment, which requires indexed fasta genome, using _bwa-index_. Thus we need bwa-mem and bwa-index modules. Luckily, nf-core provides bwa modules and we can directly install them!
+- lets test testpipeline using test profile first:
+
+```
+nextflow run main.nf -profile test,docker --outdir results
+```
+
+Note: As you can see we are not using nf-core/testpipeline to run the pipeline anymore, since we cloned the repository in our local. Running local nextflow pipelines is possible through main.nf. 
+
+- Check results/ output directory to study fastqc outputs. 
+
+Lets start building our own pipeline now:
+
+- We will perform _bwa-mem_ alignment, which requires indexed fasta genome from _bwa-index_. Thus we need bwa-mem and bwa-index modules. Luckily, nf-core modules library provides bwa modules readily available. Lets install bwa/mem and bwa/index modules:
 
 ```
 nf-core modules install bwa/mem
 nf-core modules install bwa/index
 ```
 
-Now both modules should be located in **modules/nf-core** directory. 
+Now both modules should be located in **modules/nf-core/bwa** directory. Check main.nf files to understand input and output structures.
 
-- In order to use those modules, we will add descriptions to the workflow. 
+BWA_INDEX module needs a tuple fasta file and outputs a tuple bwa/ directory containing fasta indexes. Those two files are both attached to the same meta. Which will enable us to track files easily. 
+
+```Nextflow
+process BWA_INDEX {
+    tag "$fasta"
+    label 'process_single'
+
+    conda "${moduleDir}/environment.yml"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/bwa:0.7.18--he4a0461_0' :
+        'biocontainers/bwa:0.7.18--he4a0461_0' }"
+
+    input:
+    tuple val(meta), path(fasta)
+
+    output:
+    tuple val(meta), path(bwa) , emit: index
+    path "versions.yml"        , emit: versions
+
+    when:
+    task.ext.when == null || task.ext.when
+
+    script:
+    def prefix = task.ext.prefix ?: "${fasta.baseName}"
+    def args   = task.ext.args ?: ''
+    """
+    mkdir bwa
+    bwa \\
+        index \\
+        $args \\
+        -p bwa/${prefix} \\
+        $fasta
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        bwa: \$(echo \$(bwa 2>&1) | sed 's/^.*Version: //; s/Contact:.*\$//')
+    END_VERSIONS
+    """
+
+    stub:
+    def prefix = task.ext.prefix ?: "${fasta.baseName}"
+    """
+    mkdir bwa
+
+    touch bwa/${prefix}.amb
+    touch bwa/${prefix}.ann
+    touch bwa/${prefix}.bwt
+    touch bwa/${prefix}.pac
+    touch bwa/${prefix}.sa
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        bwa: \$(echo \$(bwa 2>&1) | sed 's/^.*Version: //; s/Contact:.*\$//')
+    END_VERSIONS
+    """
+}
+
+```
+
+- In order to **include** those modules to our pipeline, we will add descriptions/paths to the workflow. 
 
 Add two lines of code to workflows/testpipeline.nf
 
 ```Nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    IMPORT NF-CORE MODULES
+    IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-//
-// MODULE: Installed directly from nf-core/modules
-//
+...
 include { BWA_MEM                } from '../modules/nf-core/bwa/mem/main'
 include { BWA_INDEX              } from '../modules/nf-core/bwa/index/main'
+...
 ```
 
 - In order to perform alignment using _bwa-mem,_ we need the reference fasta file to be indexed. testpipeline includes igenome.config template ready to use. Therefore, we can directly use one of the provided fasta files readily. We will use _bwa_index_ tool to index fasta file. 
@@ -348,11 +432,88 @@ Note: [IGenomes](https://emea.support.illumina.com/sequencing/sequencing_softwar
 
 igenome.config includes parameters for the available sources for the pipeline. Yet, to be able to use them, we need to create a channel for them. Let's create a genome channel for the usage of BWA_INDEX module. 
 
+- First, lets use _getGenomeAttribute_ function  from nf-core subworkflows. Add this line to main.nf to e able to extract fasta from igenomes.config:
+
+
 ```Nextflow
-ch_genome_fasta = Channel.fromPath(params.fasta).map { it -> [[id:it[0].simpleName], it] }.collect()
+...
+include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_variantbenchmarking_pipeline'
+
+params.fasta = getGenomeAttribute('fasta')
+
+// Initialize fasta file with meta map:
+fasta = params.fasta ? Channel.fromPath(params.fasta).map{ it -> [ [id:it.baseName], it ] }.collect() : Channel.empty()
+
+
+...
+```
+Now even we don't have a local fasta file we would be able to get it from igenomes. This commend generated a fasta channel in tuple format mapped with meta from file name.
+
+- Feed TESTPIPELINE with _fasta_ channel:
+
+```Nextflow
+
+workflow TESTPIPELINE {
+
+    //
+    // WORKFLOW: Run pipeline
+    //
+    TESTPIPELINE (
+        samplesheet,
+        fasta
+    )
+
+}
+```
+and take _fasta_ channel in _testpipeline.nf_
+
+```Nextflow
+
+workflow TESTPIPELINE {
+
+    take: 
+        samplesheet // channel: samplesheet read in from --input
+        fasta_ch    // channel: tuple val(meta), path(fasta)
+
+}
 ```
 
-- Now, we would only need to add our first module! Checking out BWA_INDEX, the only input file is a fasta file to be able to create bwa index directory.
+- Next, go to nextflow.config and command out fasta parameter
+
+```Nextflow
+ //fasta                      = null// MultiQC options
+```
+
+- Lets command out FASTQC module to be more consantrate our own pipeline. 
+
+```Nextflow
+
+    //
+    // MODULE: Run FastQC
+    //
+    \\FASTQC (
+    \\    ch_samplesheet
+    \\)
+    \\ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]})
+    \\ch_versions = ch_versions.mix(FASTQC.out.versions.first())
+```
+
+- and lets have a look on ch_fasta, type this to testpipeline.nf and make a test run.
+
+```Nextflow
+
+ch_fasta.view()
+```
+
+```
+nextflow run main.nf -profile test,docker --outdir results -resume
+```
+
+Note: We can use -resume parameter to resume complete processes! 
+
+
+- Now, we are ready to add our first module! Checking out BWA_INDEX, the only input file is a fasta file to be able to create bwa index directory.
+
 
 The output index directory will be saved into ch_index channel for our further usage. 
 
@@ -361,15 +522,22 @@ The output index directory will be saved into ch_index channel for our further u
     // MODULE: BWA_INDEX
     //
     BWA_INDEX(
-        ch_genome_fasta
+        fasta_ch
     )
     ch_index = BWA_INDEX.out.index
     ch_versions = ch_versions.mix(BWA_INDEX.out.versions)
 ```
 
-- Next task will be adding BWA_MEM alignment module:
-- 
-BWA_MEM module requires fastq reads which were already prepared through INPUT_CHECK. We prepared ch_index channel in the previous step.
+**Exercise:** Check BWA_INDEX output directory.   
+
+!!!!
+Explain validateinput here
+
+!!!
+Next task will be adding BWA_MEM alignment module:
+
+- BWA_MEM module requires fastq reads which were already prepared through INPUT_CHECK. We prepared ch_index channel in the previous step.
+
 "_true_" statement is a value in order to activate samtools sort for BAM file.
 
 ```Nextflow
