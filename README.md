@@ -329,7 +329,7 @@ Please follow all of the steps 1-9  to be able to construct a simple nextflow pi
   
 Note: Do not use _master_ brach switch into _dev_!
 
-- lets test testpipeline using test profile first:
+- test testpipeline using test profile first:
 
 ```
 nextflow run main.nf -profile test,docker --outdir results
@@ -530,22 +530,80 @@ The output index directory will be saved into ch_index channel for our further u
 
 **Exercise:** Check BWA_INDEX output directory.   
 
-!!!!
-Explain validateinput here
+Now, in order to process our own sample inputs, we need to create a samplesheet.csv which includes our sample reads:
 
-!!!
+  - This pipeline comes with nf-core sub-workflow in order to check the input files and create an input channel with them (subworkflows/nf-core/utils_nfvalidation_plugin/main.nf). It automatically checks and validates the header, sample names, and sample directories. nf-validation plug-in uses assets/schema_input.json to automatically detect csv header from samplesheet.csv and makes it easy to use as input_ch. assets/schema_input.json file in this project tuned to use sample, fastq_1 and fastq2 for example, since we will be using the same format in our analysis we are not going to change schema_json.
+
+- Lets create our own samplesheet.csv file using the test samples given:
+     - create mysamplesheet.csv file and save it under assets/ directory: 
+
+
+```console
+sample,fastq_1,fastq_2
+sample_paired_end,reads/NA12878_75M_Agilent_1.merged.fastq.gz,reads/NA12878_75M_Agilent_2.merged.fastq.gz
+sample_single_end,reads/NA12878_75M_Agilent_1.merged.fastq.gz,
+```
+
+When we do test runs, we were using test.config. That file is readily available for testpipeline describing the parameters neneded to run this pipeline involving _--input_ and _--genome parameters.
+
+- Now, lets create our own config file:
+    - Open a text file and create a config file as follows and name to mytest.config
+
+
+``` Nextflow
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Nextflow config file for running minimal tests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Defines input files and everything required to run a fast and simple pipeline test.
+
+    Use as follows:
+        nextflow run nf-core/testpipeline -profile mytest,<docker/singularity> --outdir <OUTDIR>
+
+----------------------------------------------------------------------------------------
+*/
+
+params {
+    config_profile_name        = 'Test profile'
+    config_profile_description = 'Minimal test dataset to check pipeline function'
+
+    // Limit resources so that this can run on GitHub Actions
+    max_cpus   = 2
+    max_memory = '6.GB'
+    max_time   = '6.h'
+
+    // Input data
+    // TODO nf-core: Specify the paths to your test data on nf-core/test-datasets
+    // TODO nf-core: Give any required params for the test so that command line flags are not needed
+    input  = 'assets/mysamplesheet.csv' 
+
+    // Genome references
+    genome = 'R64-1-1'
+}
+```
+
+Now, we can test if everything runs through:
+
+- add this like to the testpipeline.nf to view inputs
+
+```Nextflow
+ch_samplesheet.view()
+```
+
 Next task will be adding BWA_MEM alignment module:
 
-- BWA_MEM module requires fastq reads which were already prepared through INPUT_CHECK. We prepared ch_index channel in the previous step.
+BWA_MEM module requires fastq reads which were already prepared through ch_samplesheet. We prepared ch_index channel in the previous step using _BWA_INDEX_ module.
 
 "_true_" statement is a value in order to activate samtools sort for BAM file.
+
+- add BWA_MEM module to testpipeline.nf : 
 
 ```Nextflow
     //
     // MODULE: BWA_MEM
     //
     BWA_MEM(
-        INPUT_CHECK.out.reads,
+        ch_samplesheet,
         ch_index,
         "true"
     )
@@ -553,9 +611,9 @@ Next task will be adding BWA_MEM alignment module:
     ch_versions = ch_versions.mix(BWA_MEM.out.versions)
 ```
 
-- Final task will be calling variants using the bam files generated with BWA_MEM. We will use bcftools mpileup together with bcftools call and bcftools view. Let's create our first module using bcftools container that we created!
+Final task will be calling variants using the bam files generated with BWA_MEM. We will use bcftools mpileup together with bcftools call and bcftools view. Let's create our first module using bcftools container that we created!
 
-A draft BCFTOOLS_MPILEUP module will look like this: We will need to define input and output files together with bcftools commands that will process variant calling. 
+- A draft BCFTOOLS_MPILEUP module will look like this: We will need to define input and output files together with bcftools commands that will process variant calling. 
 
 ``` Nextflow
 process BCFTOOLS_MPILEUP {
@@ -714,67 +772,6 @@ include { BCFTOOLS_MPILEUP            } from '../modules/local/bcftools_mpileup.
         ch_genome_fasta
     )
     ch_versions = ch_versions.mix(BCFTOOLS_MPILEUP.out.versions)
-```
-
-- Now, let's prepare our **input file** which includes our sample reads:
-
-  - This pipeline comes with a ready sub-workflow in order to check the input files and create an input channel with them (subworkflows/input_check.nf). It automatically checks and validates the header, sample names, and sample directories. This module is implemented for both pair-end and single-end fastq file processing simultaneously. Since we will also use the same format, we won't change the module and make use of it directly. But, still, we need to prepare our own samplesheet accordingly to be able to input our files:
-
-Place fastq files (reads) into testpipeline directory and create mysamplesheet.csv file: 
-
-
-```console
-sample,fastq_1,fastq_2
-sample_paired_end,reads/NA12878_75M_Agilent_1.merged.fastq.gz,reads/NA12878_75M_Agilent_2.merged.fastq.gz
-sample_single_end,reads/NA12878_75M_Agilent_1.merged.fastq.gz,
-```
-
-
-- Our simple pipeline, providing parallel alignments for both paired-end and single-end fastq files is ready! Now, we need to create a config file to describe the parameters needed for the run.
-
-The config file needs to include minimal information about the run. 
-
-Open a text file and create a config file as follows and name to mytest.config
-
-
-``` Nextflow
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Nextflow config file for running minimal tests
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Defines input files and everything required to run a fast and simple pipeline test.
-
-    Use as follows:
-        nextflow run nf-core/testpipeline -profile mytest,<docker/singularity> --outdir <OUTDIR>
-
-----------------------------------------------------------------------------------------
-*/
-
-params {
-    config_profile_name        = 'Test profile'
-    config_profile_description = 'Minimal test dataset to check pipeline function'
-
-    // Limit resources so that this can run on GitHub Actions
-    max_cpus   = 2
-    max_memory = '6.GB'
-    max_time   = '6.h'
-
-    // Input data
-    // TODO nf-core: Specify the paths to your test data on nf-core/test-datasets
-    // TODO nf-core: Give any required params for the test so that command line flags are not needed
-    input  = 'assets/mysamplesheet.csv' 
-
-    // Genome references
-    genome = 'R64-1-1'
-}
-```
-
-Then, we should add the path of our config ('conf/mytest.config' ) into nextflow.config file to be able to use directly. It should be inside _profiles_ section : 
-
-``` Nextflow
-profiles{
-    mytest    { includeConfig 'conf/mytest.config'    }
-}
 ```
 
 One of the other configurations that we need to be careful of is setting a mirror to your container settings. In _nf-core/testpipeline_ they set _quay.io_ as a mirror for the registries by default. But if you want to use your own docker container generated in the 3rd step you should delete the default settings. 
