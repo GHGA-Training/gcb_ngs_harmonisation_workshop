@@ -57,9 +57,7 @@ To follow the workshop on your computer, you will need the following software an
 - [nf-core](https://nf-co.re/) - [nf-core tools on Github](https://github.com/nf-core/tools)
 - [Docker](https://www.oracle.com/java/technologies/downloads/)
 - [GitHub CLI](https://cli.github.com/)
-- Raw files (one of them is enough):
-    - [NA12878 chr21](https://drive.google.com/drive/folders/1OXGIx9RHioH1QB65SK75m_liP_fygxYH?usp=drive_link)
-    - [SEQC2 small set](https://github.com/GHGA-Training/gcb_ngs_harmonisation_workshop/tree/main/reads) 
+- [Data](https://github.com/GHGA-Training/gcb_ngs_harmonisation_workshop/tree/main/data) 
 
 ## Part 1 
 
@@ -67,46 +65,42 @@ To follow the workshop on your computer, you will need the following software an
 
 The most common way of providing stable versions for software is through git systems. Github, gitlab or bitbucket are all valuable services in software development. They provide code hosting/storage platform for version control and collaboration. It lets you and others work on the same project from anywhere. Using git systems one can create different branches (or copies) of the stable working version dependent or independent of one another. 
 
-GitHub is one of the most commonly used platform for collaborative software development and version control using git. We will be using the following repositories through this workshop. If you want, you can fork gcb_ngs_harmonisation_workshop or follow it from the original documentation.
-
-In order to ease the constraction, _nf-core/testpipeline_ will be used as a template for our workflow construction. Again,  you can either fork and create a local version of it. Dont forget to create your working (dev) branch to work on. 
+GitHub is one of the most commonly used platform for collaborative software development and version control using git. We will be using the following repositories through this workshop. If you want, you can fork [GHGA-Training/gcb_ngs_harmonisation_workshop](https://github.com/GHGA-Training/gcb_ngs_harmonisation_workshop) or follow it from the original documentation.
 
 Go to the websites and fork the following repositories:
 - https://github.com/GHGA-Training/gcb_ngs_harmonisation_workshop
-- https://github.com/nf-core/testpipeline
 
 or
 
-```
+```bash
 gh auth login
 gh repo fork https://github.com/GHGA-Training/gcb_ngs_harmonisation_workshop.git --clone
-gh repo fork https://github.com/nf-core/testpipeline --clone
 ```
 
-Whenever you fork those pages, you can take any actions on that as you wish! 
+Whenever you fork the page, you can take any actions on that as you wish! 
 
-Now, lets clone the forked testpipeline and start working on it.
+Now, lets clone the forked gcb_ngs_harmonisation_workshop and start working on it.
 
-```
-git clone https://github.com/<yourgithubname>/testpipeline
+```bash
+git clone https://github.com/<yourgithubname>/gcb_ngs_harmonisation_workshop
 git checkout -b dev
 ```
 
-Usually, working on branches is adviced to keep master enviroment as safe as possible. So, lets create _testbranch_ branch:
+Usually, working on branches is advised to keep master environment as safe as possible. So, lets create _testbranch_ branch:
 
-```
+```bash
 git checkout -b testbranch
 ```
 
 - You can switch back to master:
 
-```
+```bash
 git checkout master
 ```
 
 - You can delete the branches like: 
 
-```
+```bash
 git checkout -d testbranch
 ```
 
@@ -114,7 +108,7 @@ Don't forget that, unless you push the branch to your remote repository, the cha
 
 - You can push the branch to your remote like:
 
-```
+```bash
 git push origin testbranch
 ```
 
@@ -122,15 +116,13 @@ Exercise:
 
 - Now, checkout to a new branch named as '_dev_' and start working on it.  
 
-Notes: 
-
-if you don't want to fork the repo, pull it in your local computer work on it and push it into your own github repo! 
+> _*Note*: if you don't want to fork the repo, pull it in your local computer work on it and push it into your own github repo!_ 
 
 ### 2.  Creating your own VS-Code workstation:
 
 There are plenty of good editors but here we will be using VS-Code. If you have any other preference just go with it! The idea is to be able to connect multi-services in an environment creating a functional development strategy for lining, debugging,  editing, and pushing your code. You can add, VS-code extensions like Nextflow, nf-core tools, github, python, R and many more. 
 
-Simply, you can open _testpipeline_ using VS-code and start working on it!
+Simply, you can open _gcb_ngs_harmonisation_workshop_ using VS-code and start working on it!
 
 - Open VS-code
 
@@ -151,19 +143,19 @@ Simply, you can open _testpipeline_ using VS-code and start working on it!
   
 **Docker**
 
-```
+```bash
 docker login
 ```
 
 - The pull command lets you download a Docker image without running it. For example
 
-```
+```bash
 docker pull ubuntu:focal
 ```
 
  - Launching a BASH shell in the container allows you to operate in an interactive mode in the containerized operating system. For example
 
-```
+```bash
 docker run -ti ubuntu:focal
 ```
 - Now, you will be inside the ubuntu:focal image. But, in your local system, another layer with root@<containerid> should have been generated. 
@@ -196,22 +188,23 @@ root@<containerid> is now exit. And you are back to your local computer.
 (An example image name could be: kubran/bcftools:v1.17)
 
 Prepare your own credentials: 
-```
+
+```bash
 docker commit <containerid> <docker_name>/imagename:version_tag
 ```
 
 - Push the image to Dockerhub registry when the commit is done:
 
-```
+```bash
 docker push <docker_name>/imagename:version_tag
 ```
 
 **Dockerfiles**
 
-- The repeability of the containerization can be enabled through Dockerfile. A Dockerfile is a text document that contains all the commands a user could call on the command line to assemble an image. It has a big advaage over manuel containizarization since the file can be versioned, maintained, editted and shared with others easiliy. 
+- The repeatability of the containerization can be enabled through Dockerfile. A Dockerfile is a text document that contains all the commands a user could call on the command line to assemble an image. It has a big advantage over manuel containerization since the file can be versioned, maintained, edited and shared with others easily. 
 
 - Now, lets use a Dockerfile to create another image: 
-    - Save this Dockerfile to your enviroment (dont use any extension and name the file as Dockerfile):
+    - Save this Dockerfile to your environment (don't use any extension and name the file as Dockerfile):
 
 ```
 # Use an appropriate base image
@@ -250,19 +243,19 @@ RUN wget https://github.com/samtools/bcftools/releases/download/${BCFTOOLS_VERSI
 
 - Run the following to build the image from Dockerfile:
 
-```
+```bash
 docker build --platform linux/amd64 -t bcftools:1.17 .
 ```
 
 - Tag the image to Dockerhub registry
 
-```
+```bash
 docker tag  bcftools:1.17 <docker_name>/bcftools:1.17
 ```
 
 - Push the image to Dockerhub registry
 
-```
+```bash
 docker push <docker_name>/bcftools:1.17
 ```
 
@@ -279,7 +272,7 @@ The new generation way of pipelines are  Workflow management systems providing a
 Nextflow is growing fast and has long-term support available from Seqera Labs. It has been developed since 2013 by the same team. Nf-core is a community effort to collect a curated set of analysis pipelines built using Nextflow. The effort itself is not just restricted to pipelines, they also provide sub-workflows and modules (single processes running tools). Their modular design is very standard and also flexible for multi-purposing.  They also provide helper tools to create template pipelines, install modules, and create test cases. 
 
 
-```
+```bash
 nextflow info
 ```
 
@@ -287,13 +280,13 @@ nextflow info
 
 - let's explore **nf-core** tool:
 
-```
+```bash
 nf-core --help
 ```
 
 - Listing available pipelines:
 
-```
+```bash
 nf-core list
 ```
 
@@ -301,7 +294,7 @@ Running nf-core pipelines are very easy! Most of the resources that nf-core uses
 
 - [_test_ profile](https://github.com/nf-core/rnaseq/blob/3.14.0/conf/test.config) includes necessary input, output and parameter information to perform an example run
 
-```
+```bash
 # Launch the RNAseq pipeline
 nextflow run nf-core/rnaseq -profile test,docker
 ```
@@ -310,7 +303,7 @@ nextflow run nf-core/rnaseq -profile test,docker
 
 - Listing available modules through nf-core:
 
-```
+```bash
 nf-core modules list remote
 ```
 
@@ -319,31 +312,55 @@ We will play more with nf-core modules in the second part.
 
 ## Part 2 
 
-## Construction of a simple alignment and variant calling pipeline using nf-core tools
+## Development of a simple alignment and variant calling pipeline using nf-core tools
 
-Please follow all of the steps 1-9  to be able to construct a simple nextflow pipeline. 
 
 ### 1.  Using nf-core modules to build a simple variant calling pipeline
 
-- Let's use **nf-core/testpipeline** as a template. This pipeline is created from nf-core template originally and includes FastQC and MultiQC, and it is already working. We will use the local fork of the pipeline.
-  
-Note: Do not use _master_ brach switch into _dev_!
+> _*Note*: Creating a new pipeline using nf-core commends is well explained [here](https://nf-co.re/docs/tutorials/nextflow_training/creating_with_nf-core)_
 
-- test testpipeline using test profile first:
+- We will use nf-core template to create our first nextflow pipeline. Run the create command:
 
-```
-nextflow run main.nf -profile test,docker --outdir results
+```bash
+nf-core create
 ```
 
-Note: As you can see we are not using nf-core/testpipeline to run the pipeline anymore, since we cloned the repository in our local. Running local nextflow pipelines is possible through main.nf. 
+I used "mydemo" to name my pipeline. nf-core automatically adds nf-core prefix if you accept default settings. You can follow the instructions and interactive prompts.
 
-- Check results/ output directory to study fastqc outputs. 
+- Lets move into the new directory created with template:
+
+```bash
+cd nf-core-mydemo
+```
+
+- nf-core template comes with fully ready pipeline, before we go further be the command also initiated a git repository for you:
+
+```bash
+git status
+git branch
+```
+
+It is a common practice to work on _dev_ or _master_ branches, you should not touch _TEMPLATE_. nf-core has a automated template synchronization and it works through with template branch.
+
+- Since the template created a full ready pipeline, we can actually run it! It has *FASTQC* and *MultiQC* modules installed with a small test config which contains small sets of reads.
+
+```bash
+cd ../
+nextflow run nf-core-mydemo/ -profile test,docker --outdir test_results
+```
+
+- Check test_results/ output directory to study fastqc outputs. 
+
+---
+
+
 
 Lets start building our own pipeline now:
 
 - We will perform _bwa-mem_ alignment, which requires indexed fasta genome from _bwa-index_. Thus we need bwa-mem and bwa-index modules. Luckily, nf-core modules library provides bwa modules readily available. Lets install bwa/mem and bwa/index modules:
 
-```
+```bash
+cd nf-core-mydemo
 nf-core modules install bwa/mem
 nf-core modules install bwa/index
 ```
@@ -352,7 +369,7 @@ Now both modules should be located in **modules/nf-core/bwa** directory. Check m
 
 BWA_INDEX module needs a tuple fasta file and outputs a tuple bwa/ directory containing fasta indexes. Those two files are both attached to the same meta. Which will enable us to track files easily. 
 
-```Nextflow
+```nextflow
 process BWA_INDEX {
     tag "$fasta"
     label 'process_single'
@@ -411,9 +428,9 @@ process BWA_INDEX {
 
 - In order to **include** those modules to our pipeline, we will add descriptions/paths to the workflow. 
 
-Add two lines of code to workflows/testpipeline.nf
+Add two lines of code to workflows/mydemo.nf
 
-```Nextflow
+```nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
@@ -426,113 +443,86 @@ include { BWA_INDEX              } from '../modules/nf-core/bwa/index/main'
 ...
 ```
 
-- In order to perform alignment using _bwa-mem,_ we need the reference fasta file to be indexed. testpipeline includes igenome.config template ready to use. Therefore, we can directly use one of the provided fasta files readily. We will use _bwa_index_ tool to index fasta file. 
+- To perform alignment using _bwa-mem,_ we need the reference fasta file to be indexed. 
 
-Note: [IGenomes](https://emea.support.illumina.com/sequencing/sequencing_software/igenome.html) is a source providing collections of references and annotations supported by AWS.
+>_*Note*: The template includes igenome.config template ready to use. Therefore, we can directly use one of the provided fasta files readily. We will use _bwa_index_ tool to index fasta file. [IGenomes](https://emea.support.illumina.com/sequencing/sequencing_software/igenome.html) is a source providing collections of references and annotations supported by AWS. igenome.config includes parameters for the available sources for the pipeline._ 
 
-igenome.config includes parameters for the available sources for the pipeline. Yet, to be able to use them, we need to create a channel for them. Let's create a genome channel for the usage of BWA_INDEX module. 
+The template comes ready to use fasta channel. Please take a look into main.nf file. There _getGenomeAttribute_ function enables initiation of the channel from parameters.
 
-- First, lets use _getGenomeAttribute_ function  from nf-core subworkflows. Add this line to main.nf to e able to extract fasta from igenomes.config:
+- Now, cut the following part in main.nf and put it below _nextflow.enable.dsl = 2_ line. 
 
+!! This part is only necessary due to a current bug in the template!!
 
-```Nextflow
-...
+```nextflow
+nextflow.enable.dsl = 2
 include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_variantbenchmarking_pipeline'
-
 params.fasta = getGenomeAttribute('fasta')
 
-// Initialize fasta file with meta map:
-fasta = params.fasta ? Channel.fromPath(params.fasta).map{ it -> [ [id:it.baseName], it ] }.collect() : Channel.empty()
-
-
-...
 ```
-Now even we don't have a local fasta file we would be able to get it from igenomes. This commend generated a fasta channel in tuple format mapped with meta from file name.
 
-- Feed TESTPIPELINE with _fasta_ channel:
+- Lets create _fasta_ now.  Open workflows/mydemo.nf and paste the following lines:
 
-```Nextflow
+```nextflow
 
-workflow TESTPIPELINE {
-
-    //
-    // WORKFLOW: Run pipeline
-    //
-    TESTPIPELINE (
-        samplesheet,
-        fasta
-    )
-
-}
-```
-and take _fasta_ channel in _testpipeline.nf_
-
-```Nextflow
-
-workflow TESTPIPELINE {
+workflow MYDEMO {
 
     take: 
         samplesheet // channel: samplesheet read in from --input
-        fasta_ch    // channel: tuple val(meta), path(fasta)
+
+    main:
+...
+    // check mandatory parameters
+    println(params.fasta)
+    ch_fasta       = Channel.fromPath(params.fasta, checkIfExists: true).map{ it -> tuple([id: it[0].getSimpleName()], it) }.collect()
+
+...
 
 }
-```
 
-- Next, go to nextflow.config and command out fasta parameter
+Now, 
 
-```Nextflow
- //fasta                      = null// MultiQC options
-```
+- and lets have a look on ch_fasta, type this to mydemo.nf and make a test run.
 
-- Lets command out FASTQC module to be more consantrate our own pipeline. 
-
-```Nextflow
-
-    //
-    // MODULE: Run FastQC
-    //
-    \\FASTQC (
-    \\    ch_samplesheet
-    \\)
-    \\ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]})
-    \\ch_versions = ch_versions.mix(FASTQC.out.versions.first())
-```
-
-- and lets have a look on ch_fasta, type this to testpipeline.nf and make a test run.
-
-```Nextflow
+```nextflow
 
 ch_fasta.view()
 ```
 
+Run the pipeline:
+
+```bash
+cd ../
+nextflow run nf-core-mydemo/ -profile test,docker --outdir test_results --fasta "data/ggal_1_48850000_49020000.Ggal71.500bpflank.fa"
 ```
-nextflow run main.nf -profile test,docker --outdir results -resume
-```
 
-Note: We can use -resume parameter to resume complete processes! 
+> _*Note*: What is really cool and helpful to use the **-resume** tag to resume previously finished jobs! Moreover, don't forget to check out .nextflow.log files in case of an error. All of the runs will be saved into _work_ directory._
 
 
-- Now, we are ready to add our first module! Checking out BWA_INDEX, the only input file is a fasta file to be able to create bwa index directory.
-
+- Now, we are ready to add our first module! Checking out BWA_INDEX, the only input file is a fasta file to be able to create bwa index directory. Before you go through the process take a few minutes to read about modules [here](https://www.nextflow.io/docs/latest/module.html). 
 
 The output index directory will be saved into ch_index channel for our further usage. 
 
-```Nextflow
+```nextflow
     //
     // MODULE: BWA_INDEX
     //
     BWA_INDEX(
-        fasta_ch
+        ch_fasta
     )
     ch_index = BWA_INDEX.out.index
     ch_versions = ch_versions.mix(BWA_INDEX.out.versions)
 ```
 
-**Exercise:** Check BWA_INDEX output directory.   
+Run the pipeline to see the results:
+```
+nextflow run nf-core-mydemo/ -profile test,docker --outdir test_results --fasta "data/ggal_1_48850000_49020000.Ggal71.500bpflank.fa" -resume
+```
 
-Now, in order to process our own sample inputs, we need to create a samplesheet.csv which includes our sample reads:
+> **Exercise:** Check BWA_INDEX output directory.   
 
-  - This pipeline comes with nf-core sub-workflow in order to check the input files and create an input channel with them (subworkflows/nf-core/utils_nfvalidation_plugin/main.nf). It automatically checks and validates the header, sample names, and sample directories. nf-validation plug-in uses assets/schema_input.json to automatically detect csv header from samplesheet.csv and makes it easy to use as input_ch. assets/schema_input.json file in this project tuned to use sample, fastq_1 and fastq2 for example, since we will be using the same format in our analysis we are not going to change schema_json.
+Next task is to add BWA_MEM to align our reads, but first lets edit samplesheet.csv so that it will include our own samples:
+
+- This pipeline comes with nf-core sub-workflow in order to check the input files and create an input channel with them (subworkflows/nf-core/utils_nfvalidation_plugin/main.nf). It automatically checks and validates the header, sample names, and sample directories. nf-validation plug-in uses assets/schema_input.json to automatically detect csv header from samplesheet.csv and makes it easy to use as input_ch. assets/schema_input.json file in this project tuned to use sample, fastq_1 and fastq2 for example, since we will be using the same format in our analysis we are not going to change schema_json. Please read more [here](https://nextflow-io.github.io/nf-schema/latest/) about nf-schema structure. 
 
 - Lets create our own samplesheet.csv file using the test samples given:
      - create mysamplesheet.csv file and save it under assets/ directory: 
@@ -540,17 +530,20 @@ Now, in order to process our own sample inputs, we need to create a samplesheet.
 
 ```console
 sample,fastq_1,fastq_2
-sample_paired_end,reads/NA12878_75M_Agilent_1.merged.fastq.gz,reads/NA12878_75M_Agilent_2.merged.fastq.gz
-sample_single_end,reads/NA12878_75M_Agilent_1.merged.fastq.gz,
+gut,data/ggal_gut_1.fq.gz,data/ggal_gut_2.fq.gz
+liver,data/ggal_liver_1.fq.gz,data/ggal_liver_2.fq.gz
 ```
 
-When we do test runs, we were using test.config. That file is readily available for testpipeline describing the parameters neneded to run this pipeline involving _--input_ and _--genome parameters.
+!! Make sure to give the correct path for your files (instructions were given already for sample files)
+
+
+When we do test runs, we were using test.config. That file is readily available for template pipeline describing the parameters needed to run this pipeline involving _--input_ and _--genome parameters.
 
 - Now, lets create our own config file:
     - Open a text file and create a config file as follows and name to mytest.config
 
 
-``` Nextflow
+``` nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Nextflow config file for running minimal tests
@@ -558,7 +551,7 @@ When we do test runs, we were using test.config. That file is readily available 
     Defines input files and everything required to run a fast and simple pipeline test.
 
     Use as follows:
-        nextflow run nf-core/testpipeline -profile mytest,<docker/singularity> --outdir <OUTDIR>
+        nextflow run nf-core/nf-core-mydemo -profile mytest,<docker/singularity> --outdir <OUTDIR>
 
 ----------------------------------------------------------------------------------------
 */
@@ -573,49 +566,58 @@ params {
     max_time   = '6.h'
 
     // Input data
-    // TODO nf-core: Specify the paths to your test data on nf-core/test-datasets
-    // TODO nf-core: Give any required params for the test so that command line flags are not needed
     input  = 'assets/mysamplesheet.csv' 
 
     // Genome references
-    genome = 'R64-1-1'
+    //genome = 'hg38'
+    fasta = "data/ggal_1_48850000_49020000.Ggal71.500bpflank.fa"
 }
 ```
 
-Now, we can test if everything runs through:
+Now we will be adding BWA_MEM alignment module:
 
-- add this like to the testpipeline.nf to view inputs
+BWA_MEM module requires fastq reads which were already provided with ch_samplesheet. We prepared ch_index channel in the previous step using _BWA_INDEX_ module.
 
-```Nextflow
-ch_samplesheet.view()
-```
+"_sort_" statement is a value in order to activate samtools sort for BAM file.
 
-Next task will be adding BWA_MEM alignment module:
+- add BWA_MEM module to mydemo.nf : 
 
-BWA_MEM module requires fastq reads which were already prepared through ch_samplesheet. We prepared ch_index channel in the previous step using _BWA_INDEX_ module.
-
-"_true_" statement is a value in order to activate samtools sort for BAM file.
-
-- add BWA_MEM module to testpipeline.nf : 
-
-```Nextflow
+```nextflow
     //
     // MODULE: BWA_MEM
     //
     BWA_MEM(
         ch_samplesheet,
         ch_index,
+        fasta,
         "true"
     )
     ch_bam = BWA_MEM.out.bam
     ch_versions = ch_versions.mix(BWA_MEM.out.versions)
 ```
 
+Run the pipeline to see the results:
+
+```bash
+nextflow run nf-core-mydemo/ -profile docker -c conf/mytest.config --outdir test_results -resume
+```
+
+> Warning: Be awaire that we are no longer using the test profile and switched into our own config. To be able to run it through profile, we should add it as profile in nextflow.config:
+
+```nextflow
+    test      { includeConfig 'conf/test.config'      }
+    test_full { includeConfig 'conf/test_full.config' }
+    mytest    { includeConfig 'conf/mytest.config'    }
+```
+
 Final task will be calling variants using the bam files generated with BWA_MEM. We will use bcftools mpileup together with bcftools call and bcftools view. Let's create our first module using bcftools container that we created!
+
+> Tip: If you think this task is too much for you, you can also use readly available BCFTOOLS_MPILEUP module from nf-core! Just follow the same steps that we did for BWA_INDEX and BWA_MEM!_
+
 
 - A draft BCFTOOLS_MPILEUP module will look like this: We will need to define input and output files together with bcftools commands that will process variant calling. 
 
-``` Nextflow
+```nextflow
 process BCFTOOLS_MPILEUP {
     tag "$meta.id"
     label 'process_medium'
@@ -653,7 +655,7 @@ Open bcftools_mpileup.nf and place under modules/local folder, and copy the abov
 
 Now, we need to construct the simple CMD for variant calling: 
 
-```Nextflow
+```nextflow
     bcftools \\
         mpileup \\
         --fasta-ref $fasta \\
@@ -670,7 +672,7 @@ _bctools mpileup_ will produce a mpileup file including genotypes, then we will 
 
 We will need the alignment bam file and reference fasta file to run _bcftools mpileup_ and this argument will produce an indexed vcf.gz file and a statistic file in txt format. Therefore, input and output definitions will be: 
 
-```Nextflow
+```nextflow
     input:
     tuple val(meta), path(bam)
     tuple val(meta2), path (fasta)
@@ -686,7 +688,7 @@ We will need the alignment bam file and reference fasta file to run _bcftools mp
  We will also emit versions file to keep track of bcftool versioning.
 
 
-```Nextflow
+```nextflow
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         bcftools: \$(bcftools --version 2>&1 | head -n1 | sed 's/^.*bcftools //; s/ .*\$//')
@@ -695,17 +697,17 @@ We will need the alignment bam file and reference fasta file to run _bcftools mp
 
  We can add either our docker container (created in the 3rt step) or search for the proper bcftool version on[ biocontainers registry](https://quay.io/repository/biocontainers/bcftools?tab=tags). 
 
-```Nextflow
+```nextflow
     conda "bioconda::bcftools=1.17"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/bcftools:1.17--haef29d1_0':
-        'quay.io/biocontainers/bcftools:1.17--haef29d1_0' }"
+        'biocontainers/bcftools:1.17--haef29d1_0' }"
 ```
 
- The final module should be like this:
+ The final module should like this:
 
 
-```Nextflow
+```nextflow
 process BCFTOOLS_MPILEUP {
     tag "$meta.id"
     label 'process_medium'
@@ -713,7 +715,7 @@ process BCFTOOLS_MPILEUP {
     conda "bioconda::bcftools=1.17"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/bcftools:1.17--haef29d1_0':
-        'quay.io/biocontainers/bcftools:1.17--haef29d1_0' }"
+        'biocontainers/bcftools:1.17--haef29d1_0' }"
 
     input:
     tuple val(meta), path(bam)
@@ -751,9 +753,9 @@ process BCFTOOLS_MPILEUP {
 }
 ```
 
-- Since we finished BCFTOOLS_MPILEUP module, we can include it in the workflow. First, add path of the module:
+- Since we finished BCFTOOLS_MPILEUP module, we can include it in the workflow (mydemo.nf):
 
-``` Nextflow
+```nextflow
 //
 // MODULE: Installed directly locally
 //
@@ -761,22 +763,22 @@ include { BCFTOOLS_MPILEUP            } from '../modules/local/bcftools_mpileup.
 
 ```
   
-- Let's connect BCFTOOLS_MPILEUP module to the output of BWA_MEM module
+- Let's connect BCFTOOLS_MPILEUP module to the mapped reads output from BWA_MEM module:
 
-``` Nextflow
+```nextflow
     //
     // MODULE: BCFTOOLS_MPILEUP
     //
     BCFTOOLS_MPILEUP(
         ch_bam,
-        ch_genome_fasta
+        ch_fasta
     )
     ch_versions = ch_versions.mix(BCFTOOLS_MPILEUP.out.versions)
 ```
 
-One of the other configurations that we need to be careful of is setting a mirror to your container settings. In _nf-core/testpipeline_ they set _quay.io_ as a mirror for the registries by default. But if you want to use your own docker container generated in the 3rd step you should delete the default settings. 
+One of the other configurations that we need to be careful of is setting a mirror to your container settings. In the tempalate pipeline they set _quay.io_ as a mirror for the registries by default. But if you want to use your own docker container generated in the 3rd step you should delete the default settings. 
 
-``` Nextflow
+```nextflow
 apptainer.registry   = 'quay.io'
 docker.registry      = 'quay.io'
 podman.registry      = 'quay.io'
@@ -784,7 +786,7 @@ singularity.registry = 'quay.io'
 ```
 to 
 
-``` Nextflow
+```nextflow
 apptainer.registry   = ''
 docker.registry      = ''
 podman.registry      = ''
@@ -793,48 +795,143 @@ singularity.registry = ''
 
 If you decide to use ready containers from biocontainers default settings can remain. 
 
-### 6.  Our first full-functioning pipeline is ready! and we can directly run it!
 
-Here, we will try to run our workflow using the config file we created (mytest), and input file we prepared (mysamplesheet.csv) and docker environment. But you can also run it with singularity. You can define another output directory else than _results_. 
-```
-nextflow run main.nf -profile mytest,docker --outdir results --input mysamplesheet.csv
-```
+### 2.  Our first full-functioning pipeline is ready! and we can directly run it!
 
-We can actually test and debug our pipeline using this command. What is really cool and helpful to use the **-resume** tag to resume previously finished jobs! Moreover, don't forget to check out .nextflow.log files in case of an error. All of the runs will be saved into _work_ directory. 
+It is actually that easy to create such a functional workflow! 
+
+Here, we will try to run our workflow using the config file we created (mytest), and input file we prepared (mysamplesheet.csv) and docker environment. But you can also run it with singularity. You can also define another output directory else than _test_results_. 
+
+```bash
+nextflow run nf-core-mydemo/ -profile mytest,docker --outdir test_results -resume
+
+```
 
 In the first run of this workflow, container images and genome would need to be pulled (all automatic) which is why the initial run will take a bit longer than the following runs!  
 
-NOTE: If you receive a permission denied error for the bin directory just provide the necessary permissions as follows:
-```
-chmod +x bin/*
+What is really cool about nf-core tools is that they could lint your project and tell what it is missing. Lets lint our current pipeline:
+
+```bash
+nf-core lint
 ```
 
-### 7. Analyzing the results:
+This line of code will print out some warnings about _TODOs_ automatically involved with template pipeline. You can go ahead and try to fullfill the requirements yourself. You can write a nice _README.md_ describing how the pipeline works,or add some extra parameters using _nexftlow.config_ and nextflow_schema.json_. 
+
+
+### 3. Defining an output structure
+
+If you analyzed the test_results directory already, you would see that it automatically created _bwa_ and _bcftools_ directories for you. Those directories actually are initials of our module names. In order to shape our output structure better lets investigate conf/modules.config which contains arguments per module options:
+
+```nextflow
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Config file for defining DSL2 per module options and publishing paths
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Available keys to override module options:
+        ext.args   = Additional arguments appended to command in module.
+        ext.args2  = Second set of arguments appended to command in module (multi-tool modules).
+        ext.args3  = Third set of arguments appended to command in module (multi-tool modules).
+        ext.prefix = File name prefix for output files.
+----------------------------------------------------------------------------------------
+*/
+
+process {
+
+    publishDir = [
+        path: { "${params.outdir}/${task.process.tokenize(':')[-1].tokenize('_')[0].toLowerCase()}" },
+        mode: params.publish_dir_mode,
+        saveAs: { filename -> filename.equals('versions.yml') ? null : filename }
+    ]
+
+    withName: FASTQC {
+        ext.args = '--quiet'
+    }
+
+    withName: 'MULTIQC' {
+        ext.args   = { params.multiqc_title ? "--title \"$params.multiqc_title\"" : '' }
+        publishDir = [
+            path: { "${params.outdir}/multiqc" },
+            mode: params.publish_dir_mode,
+            saveAs: { filename -> filename.equals('versions.yml') ? null : filename }
+        ]
+    }
+
+}
+```
+
+- Lets add shape our outputs better for *BWA_MEM* and *BCFTOOLS_MPILEUP*. Add the following lines to modules.config
+
+```nextflow
+...
+
+    withName: 'BWA_MEM' {
+        publishDir = [
+            path: { "${params.outdir}/${meta.id}/alignment" },
+            pattern: "*{.bam}",
+            mode: params.publish_dir_mode
+        ]
+    }
+    withName: 'BCFTOOLS_MPILEUP' {
+        publishDir = [
+            path: { "${params.outdir}/${meta.id}/variant_calling" },
+            pattern: "*{.vcf.gz,tbi,stats}",
+            mode: params.publish_dir_mode
+        ]
+    }    
+...
+```
+
+Please read more from [here](https://www.nextflow.io/docs/latest/config.html) to better learn and understand about nextflow configurations.
+
+### 3. Optimizing resources
+
+nf-core modules uses the average amount of resources to run the process inside. Therefore, they are being optimized into the tool and the input size (average size). Running through some of the modules might require extensive amount of memory and cpu like the case we have in BWA_MEM which uses 'process_high'. In order to run an small test sample, we won't need high processing but can use small amounts. Let's change it. 
+
+We can redefine sources (cpu=4 and memory=6GB) in mytest.config by adding these lines:
+
+```nextflow
+process {
+   withName:'BWA_MEM'{
+        cpus            = { check_max( 2 * task.attempt, 'cpus' ) }
+        memory          = { check_max( 6.GB * task.attempt, 'memory' ) }
+   }
+}
+```
+
+> _*Note*: If the resource is low for the running process, task.attempt will automatically be multiplied by the resource and task will be rerun!_
+
+When you create your own pipelines, you can also edit base.config where process tags are being defines.
+
+### 4. Analyzing the results
 
 - _Provenance_ describes the history of a computational experiment and it is a very important aspect of workflows. Minor changes, usually in the workflow environment, software versions, parameter settings, and reference annotations, may or may not change the results of each workflow run but the major challenge is to know and record the exact environment you run your analysis. Data provenance describes this trail of methods, versions, and arguments that were used to generate a set of files. In short, it is the history of a computational environment you used for the analysis.
+
 - nf-core pipelines are armed through many provenance tools with the construction of _work_ directory with _temp_ results of each run, saving workflow execution history through .nextflow.log files as well as _CUSTOM_DUMPSOFTWAREVERSIONS_ module and MultiQC tools. 
+
 - Collection of versions is a vital process in order to keep track of software history. In nf-core pipelines, each tool version is collected in a channel and then processed using _CUSTOM_DUMPSOFTWAREVERSIONS_ module and represented through MultiQC tool.
+
 - Used data, produced inputs and outputs, artifacts, information about the execution like consumed memory and CPU, processed time saved and represented in final reports of nf-core tools. 
+
 - MultiQC tool also aggregates logs and reports from the analysis. In our analysis, FASTQC analysis was already included. In this example file, you can both see the FASTQC report and the software versions together with the workflow summary.
 
 
-### 8. Committing changes to github repo, and Continuous Integration test environment  
+### 5. Committing changes to github repo, and Continuous Integration test environment  
 
-Another advantage of using github is easy debugging. Testing the code and building can be automized. Continuous Integration (CI) tests refer to the build and unit testing stages of the software release process and are curious for automatic software development. Every revision that is committed triggers an automated build and test. When it is reviewed and approved, it can be merged safely. The aim is to protect the main branch from errors and unintended changes. CI tests are mandatory for nf-core pipelines and luckily in our example nf-core/testpipeline also comes with an environment that we can actually work on! In order to activate automatic tests:
+Another advantage of using github is easy debugging. Testing the code and building can be automized. Continuous Integration (CI) tests refer to the build and unit testing stages of the software release process and are curious for automatic software development. Every revision that is committed triggers an automated build and test. When it is reviewed and approved, it can be merged safely. The aim is to protect the main branch from errors and unintended changes. CI tests are mandatory for nf-core pipelines and luckily in our example nf-core-mydemo also comes with an environment that we can actually work on! In order to activate automatic tests:
 
-- Activate actions tab on github (on your github repo testpipeline)
+- Activate actions tab on github (on your github repo nf-core-mydemo)
 - under .github/workflows/ci.yml
 
 Change this line
 
 ```yml
     # Only run on push if this is the nf-core dev branch (merged PRs)
-    if: "${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == 'nf-core/testpipeline') }}"
+    if: "${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == 'nf-core/mydemo') }}"
 ```
 to
 ```yml
     # Only run on push
-    if: "${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == '<your github name>/testpipeline') }}"
+    if: "${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == '<your_github_name>/nf-core-mydemo') }}"
 ```
 
 Now whenever we commit changes to _dev_ branch, a small test pipeline will be triggered in order to check if the workflow/code works smoothly.  
@@ -842,7 +939,7 @@ Now whenever we commit changes to _dev_ branch, a small test pipeline will be tr
     
 The last thing we need to do is to commit the changes we have in our repository and push into _dev_ branch that we were working in. 
 
-```
+```bash
 git add .
 git commit -a -m "commit" (commit message)
 ```
@@ -852,7 +949,7 @@ It is also possible to commit changes using VS-Code if you installed github exte
 When you complete the commit, you can monitor the test under _Actions_ bar at the top of github repository. If everything is working fine, then it will be finished without any errors! 
 
 
-**FINAL NOTE**: https://github.com/kubranarci/testpipeline/tree/dev includes a run-ready pipeline with a results directory. If you haven't managed to complete your workflow just yet, you can have a look. 
+> **FINAL NOTE**: https://github.com/kubranarci/nf-core-mydemo/tree/dev includes a run-ready pipeline with a results directory. If you haven't managed to complete your workflow just yet, you can have a look. 
 
 ### Are you looking for your next challange? 
 
@@ -874,7 +971,7 @@ nf-core create -n sortandindex -d "This pipeline subsets a region, sorts and ind
 
 6. Install relevant samtools modules:
 
-```
+```bash
 nf-core modules install samtools/sort
 nf-core modules install samtools/view
 nf-core modules install samtools/index
