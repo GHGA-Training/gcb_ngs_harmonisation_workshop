@@ -934,6 +934,30 @@ to
     if: "${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == '<your_github_name>/nf-core-mydemo') }}"
 ```
 
+We should also change the test profile to ours: 
+
+change this line
+
+```yml
+      - name: Run pipeline with test data
+        # TODO nf-core: You can customise CI pipeline run tests as required
+        # For example: adding multiple test runs with different parameters
+        # Remember that you can parallelise this by using strategy.matrix
+        run: |
+          nextflow run ${GITHUB_WORKSPACE} -profile test,docker --outdir ./results
+```
+
+to 
+
+```yml
+      - name: Run pipeline with test data
+        # TODO nf-core: You can customise CI pipeline run tests as required
+        # For example: adding multiple test runs with different parameters
+        # Remember that you can parallelise this by using strategy.matrix
+        run: |
+          nextflow run ${GITHUB_WORKSPACE} -profile mytest,docker --outdir ./results
+```
+
 Now whenever we commit changes to _dev_ branch, a small test pipeline will be triggered in order to check if the workflow/code works smoothly.  
 
     
