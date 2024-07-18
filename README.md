@@ -492,7 +492,7 @@ Run the pipeline:
 
 ```bash
 cd ../
-nextflow run nf-core-mydemo/ -profile test,docker --outdir test_results --fasta "data/ggal_1_48850000_49020000.Ggal71.500bpflank.fa"
+nextflow run nf-core-mydemo/ -profile test,docker --outdir test_results --fasta "mydata/ggal_1_48850000_49020000.Ggal71.500bpflank.fa"
 ```
 
 > _*Note*: What is really cool and helpful to use the **-resume** tag to resume previously finished jobs! Moreover, don't forget to check out .nextflow.log files in case of an error. All of the runs will be saved into _work_ directory._
@@ -515,7 +515,7 @@ The output index directory will be saved into ch_index channel for our further u
 
 Run the pipeline to see the results:
 ```
-nextflow run nf-core-mydemo/ -profile test,docker --outdir test_results --fasta "data/ggal_1_48850000_49020000.Ggal71.500bpflank.fa" -resume
+nextflow run nf-core-mydemo/ -profile test,docker --outdir test_results --fasta "mydata/ggal_1_48850000_49020000.Ggal71.500bpflank.fa" -resume
 ```
 
 > **Exercise:** Check BWA_INDEX output directory.   
@@ -530,8 +530,8 @@ Next task is to add BWA_MEM to align our reads, but first lets edit samplesheet.
 
 ```console
 sample,fastq_1,fastq_2
-gut,data/ggal_gut_1.fq.gz,data/ggal_gut_2.fq.gz
-liver,data/ggal_liver_1.fq.gz,data/ggal_liver_2.fq.gz
+gut,mydata/ggal_gut_1.fq.gz,data/ggal_gut_2.fq.gz
+liver,mydata/ggal_liver_1.fq.gz,data/ggal_liver_2.fq.gz
 ```
 
 !! Make sure to give the correct path for your files (instructions were given already for sample files)
@@ -570,7 +570,7 @@ params {
 
     // Genome references
     //genome = 'hg38'
-    fasta = "data/ggal_1_48850000_49020000.Ggal71.500bpflank.fa"
+    fasta = "mydata/ggal_1_48850000_49020000.Ggal71.500bpflank.fa"
 }
 ```
 
@@ -975,15 +975,16 @@ When you complete the commit, you can monitor the test under _Actions_ bar at th
 
 > **FINAL NOTE**: https://github.com/kubranarci/nf-core-mydemo/tree/dev includes a run-ready pipeline with a results directory. If you haven't managed to complete your workflow just yet, you can have a look. 
 
-### Are you looking for your next challange? 
+---
 
-If you are feeling confortable enough working with template pipeline, why not to create your own pipeline using a (nf-core pipeline)[https://nf-co.re/docs/nf-core-tools/pipelines/create] template?
+
+### Are you looking for your next challange? 
 
 In this small exercise you will be creating a simple workflow to subset, sort and index given alignment files.
 
 1. Create a new pipeline using _create_ command
 
-```
+```bash
 nf-core create -n sortandindex -d "This pipeline subsets a region, sorts and indexes given alignment files" --plain
 ```
 
@@ -1016,7 +1017,7 @@ samtools index -b  input.inputregion.bam input.inputregion.bam.bai
 
 9. Edit modules.config to arrange arguments and output files properly
 
-10. Edit test.config for quick test development. Tip: You can use the example bam files in this exercise.
+10. Edit test.config for quick test development. Tip: You can use the example bam files in created in this exercise.
 
 11. Test your development
 
