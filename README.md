@@ -93,10 +93,10 @@ Usually, working on branches is advised to keep master environment as safe as po
 git checkout -b testbranch
 ```
 
-- You can switch back to master:
+- You can switch back to main:
 
 ```bash
-git checkout master
+git checkout main
 ```
 
 - You can delete the branches like: 
@@ -133,7 +133,7 @@ Simply, you can open _gcb_ngs_harmonisation_workshop_ using VS-code and start wo
     - Open the directory where you clone the repository
 
 - Checkout to '_dev_' branch 
-    - Press '_master_' bottom left of the screen
+    - Press '_main_' bottom left of the screen
     - Write dev and press enter.
   
 ### 3.  How to build and use **Docker** containers:
